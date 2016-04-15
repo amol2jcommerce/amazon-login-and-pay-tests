@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <title>Blurring the button until loaded</title>
+    <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+    <style>
+        img.blur {
+            filter: url(blur.svg#blur);
+            -webkit-filter: blur(1px) grayscale(100%);
+            filter: blur(1px) grayscale(100%);
+            filter: progid: DXImageTransform.Microsoft.Blur(PixelRadius='2');
+            
+        }
+      
+    </style>
+</head>
+
+<body>
+    <div id="amazon_pay_button"></div>
+    <img id="amazon_pay_button_placeholder" class="blur" src="https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/uk/sandbox/prod/image/lwa/gold/large/PwA.png" />
+<p>
+    This is using a static image with css filters that gets replaced once our code is loaded.
+    The link to the image is hard coded, but it can be calculated out of needed information (and eventually defaults):
+    <ul>
+        <li>Environmanet: sandbox|live</li>
+        <li>Region: uk|de</li>
+        <li>Color: gold|lightGray|darkGray</li>
+        <li>Size: medium|large|...</li>
+        <li>Type: e.g. PwA</li>
+    </ul>
+    
+    This is or the moment missing the us and jp, but this can be added easily.
+</p>
+    <script>
+        var clickCatched = false;
+        $("#amazon_pay_button_placeholder").click(function() {
+            clickCatched = true;
+        });
+
+        window.onAmazonLoginReady = function() {
+            amazon.Login.setClientId("amzn1.application-oa2-client.1911b93e3e3f4e1d8701d044ea800b8c");
+        };
+        window.onAmazonPaymentsReady = function() {
+            // render the button delayed
+            setTimeout(renderButton, 3000);
+        };
+
+        function renderButton() {
+            var authRequest;
+            var loginOptions = {
+                scope: "profile payments:widget",
+                popup: "true"
+            };
+            OffAmazonPayments.Button("amazon_pay_button", "AUFORHVDBNC4T", {
+                type: "PwA",
+                color: "Gold",
+                size: "large",
+                language: "en-gb",
+
+                authorization: function() {
+                    authRequest = amazon.Login.authorize(loginOptions, customerAuthorized);
+                },
+                onError: function(error) {
+                    console.log(error);
+                }
+            });
+            var image = $(".blur")[0];
+            $(image).remove();
+
+            if (clickCatched) {
+                // this ends in a popup blocker
+                $("#amazon_pay_button").children("img").click();
+      
+                clickCatched = false;
+            }
+
+        }
+
+
+        function customerAuthorized(result) {
+            console.log(result);
+        }
+    </script>
+
+    <script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+
+</body>
+
+</html>
