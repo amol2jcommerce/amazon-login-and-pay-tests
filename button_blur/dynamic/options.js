@@ -21,8 +21,8 @@ var types = {
 }
 
 var languages = {
-    "UK English": "en_GB",
     "Germany's German": "de_DE",
+    "UK English": "en_GB",
     "France's French": "fr_FR",
     "Italy's Italian": "it_IT",
     "Spain's Spanish": "es_ES"

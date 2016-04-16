@@ -96,7 +96,7 @@
     var color = "Gold";
     var size = "medium";
     var type = "PwA";
-    var language = "en_GB";
+    var language = "de_DE";
     var environment= "sandbox";
     var region = "uk";
     
