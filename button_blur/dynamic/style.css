@@ -1,0 +1,21 @@
+.options {
+    width: 420px;
+    border: none;
+}
+
+.separator {
+    width: 10%;
+    text-align: center;
+}
+
+.option, .value {
+    width: 45%;
+}
+
+.option {
+    text-align: right;
+}
+
+.value {
+    text-align:left;
+}
