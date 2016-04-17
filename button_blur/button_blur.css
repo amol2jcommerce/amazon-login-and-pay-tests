@@ -3,4 +3,7 @@ img.blur {
     -webkit-filter: blur(1px) grayscale(100%);
     filter: blur(1px) grayscale(100%);
     filter: progid: DXImageTransform.Microsoft.Blur(PixelRadius='2');
+    
+    position: absolute;
+    z-index: -2;
 }

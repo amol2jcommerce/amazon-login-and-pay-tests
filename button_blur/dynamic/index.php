@@ -221,9 +221,6 @@ include("config.php");
                 }
             });
             
-            
-            var image = $(".blur")[0];
-            $(image).remove();
             if (clickCatched) {
                 // this ends in a popup blocker
                 $("#amazon_pay_button").children("img").click();

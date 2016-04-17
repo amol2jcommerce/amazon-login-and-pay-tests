@@ -24,10 +24,12 @@
 
         This is for the moment missing the us and jp, but this can be added easily.
     </p>
-    <div id="amazon_pay_button"></div>
-    <img id="amazon_pay_button_placeholder" class="blur" src="https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/uk/sandbox/prod/image/lwa/gold/large/PwA.png" />
+    <div id="amazon_pay_button">
+        <img id="amazon_pay_button_placeholder" class="blur" src=""/>
+    </div>
 
     <script>
+        $("#amazon_pay_button_placeholder").attr("src", "https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/uk/sandbox/prod/image/lwa/gold/large/PwA.png");
         var clickCatched = false;
         $("#amazon_pay_button_placeholder").click(function() {
             clickCatched = true;
@@ -61,7 +63,8 @@
                 }
             });
             var image = $(".blur")[0];
-            $(image).remove();
+            $(image).removeClass("blur").css( 'cursor', 'pointer' );
+            
 
             if (clickCatched) {
                 // this ends in a popup blocker
