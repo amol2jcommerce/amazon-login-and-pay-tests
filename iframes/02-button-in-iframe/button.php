@@ -21,7 +21,7 @@ require_once '../config.php';
           authorization: function() {
             loginOptions =
               {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: "true"};
-            authRequest = amazon.Login.authorize (loginOptions, redirect());
+            authRequest = amazon.Login.authorize (loginOptions, redirect);
           },
           onError: function(error) {
             console.log(error);
@@ -29,8 +29,12 @@ require_once '../config.php';
         });
       }
       
-      function redirect(){
+      function redirect(result){
+        if(!result.error){
           window.location.href= "widgets.php";
+        } else {
+          console.log("auth failed due to: " + result.error);
+        }
       }
       
     </script>

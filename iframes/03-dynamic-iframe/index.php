@@ -4,11 +4,11 @@
   </head>
 <body>
 <?php
-    if(!empty($_SERVER['HTTPS'])){
+    if(!empty($_SERVER['HTTPS']) || $_SERVER['REQUEST_SCHEME'] == "https"){
         include "button.php";
-    }else {
+    } else {
 ?>
-    <iframe width="90%" height="800px" id="lpa_button" src="https://com-search.de/amz/samples/amazon-login-and-pay-tests/iframes/03-dynamic-iframe/button.php">
+    <iframe width="90%" height="800px" id="lpa_button" src="button.php">
 <?php
     }
 ?>
