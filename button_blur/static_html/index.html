@@ -25,11 +25,10 @@
         This is for the moment missing the us and jp, but this can be added easily.
     </p>
     <div id="amazon_pay_button">
-        <img id="amazon_pay_button_placeholder" class="blur" src=""/>
+        <img id="amazon_pay_button_placeholder" class="blur" src="https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/de/sandbox/prod/image/lwa/gold/large/PwA.png"/>
     </div>
 
     <script>
-        $("#amazon_pay_button_placeholder").attr("src", "https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/uk/sandbox/prod/image/lwa/gold/large/PwA.png");
         var clickCatched = false;
         $("#amazon_pay_button_placeholder").click(function() {
             clickCatched = true;
@@ -53,7 +52,6 @@
                 type: "PwA",
                 color: "Gold",
                 size: "large",
-                language: "en-gb",
 
                 authorization: function() {
                     authRequest = amazon.Login.authorize(loginOptions, customerAuthorized);
@@ -62,8 +60,6 @@
                     console.log(error);
                 }
             });
-            var image = $(".blur")[0];
-            $(image).removeClass("blur").css( 'cursor', 'pointer' );
             
 
             if (clickCatched) {
