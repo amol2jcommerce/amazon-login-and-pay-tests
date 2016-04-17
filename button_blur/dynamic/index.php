@@ -1,3 +1,6 @@
+<?php
+include("config.php");
+?>
 <html>
 
 <head>
@@ -98,7 +101,7 @@
     var type = "PwA";
     var language = "de_DE";
     var environment= "sandbox";
-    var region = "uk";
+    var region = "<?php echo $config['region']; ?>".toLowerCase();
     
     var imgSrc = "https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/$region$/$language$/$environment$prod/image/lwa/$color$/$size$/$type$.png";
     
@@ -190,7 +193,7 @@
 
         );
         window.onAmazonLoginReady = function() {
-            amazon.Login.setClientId("amzn1.application-oa2-client.1911b93e3e3f4e1d8701d044ea800b8c");
+            amazon.Login.setClientId("<?php echo $config['client_id']; ?>");
         }
 
         ;
@@ -205,7 +208,7 @@
                 scope: "profile payments:widget",
                 popup: "true"
             };
-            OffAmazonPayments.Button("amazon_pay_button", "AUFORHVDBNC4T", {
+            OffAmazonPayments.Button("amazon_pay_button", "<?php echo $config['merchant_id']; ?>", {
                 type: type,
                 color: color,
                 size: size,
