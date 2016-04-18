@@ -4,6 +4,7 @@
     <title>Blurring the button until loaded</title>
     <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
     <link rel="stylesheet" href="../button_blur.css" />
+    <link rel="preload" href="https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js" as="script">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 </head>
 
@@ -25,7 +26,7 @@
         This is for the moment missing the us and jp, but this can be added easily.
     </p>
     <div id="amazon_pay_button">
-        <img id="amazon_pay_button_placeholder" class="blur" src="https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/de/sandbox/prod/image/lwa/gold/large/PwA.png"/>
+        <img id="amazon_pay_button_placeholder" class="blur" src="https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/uk/de_DE/sandbox/prod/image/lwa/gold/large/PwA.png"/>
     </div>
 
     <script>
@@ -52,6 +53,7 @@
                 type: "PwA",
                 color: "Gold",
                 size: "large",
+                language: "de-DE",
 
                 authorization: function() {
                     authRequest = amazon.Login.authorize(loginOptions, customerAuthorized);
@@ -77,7 +79,7 @@
         }
     </script>
 
-    <script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+    <script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
 
 </body>
 
