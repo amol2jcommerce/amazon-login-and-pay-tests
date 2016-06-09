@@ -51,6 +51,7 @@ require_once '../config.php';
               if(!paymentRendered){
                   renderPaymentWidget();
               }
+			  document.getElementById("infoContainer").innerHTML += "address selected<br />";
             },
             design: {
               designMode: 'responsive'
@@ -68,6 +69,7 @@ require_once '../config.php';
             onPaymentSelect: function(orderReference) {
               // Replace this code with the action that you want to perform
               // after the payment method is selected.
+			  document.getElementById("infoContainer").innerHTML += "payment method selected<br />";
             },
             design: {
               designMode: 'responsive'
@@ -79,10 +81,16 @@ require_once '../config.php';
           
           paymentRendered = true;
       }
+	  
       
 </script>
 <script async='async' type='text/javascript' 
 src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'>
 </script> 
+
+<br />
+
+
+	  <div id="infoContainer"></div>
   </body>
 </html>
