@@ -51,7 +51,7 @@ require_once 'config.php';
 
           authorization: function() {
             loginOptions =
-              {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: false};
+              {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: false, state: "bubu"};
             authRequest = amazon.Login.authorize (loginOptions, "widgets.php");
           },
           onError: function(error) {

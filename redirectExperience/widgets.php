@@ -34,6 +34,7 @@ require_once 'config.php';
 	<div id="logout">Logout</div>
 	
 	<div id="check">Check login state</div>
+<div id="state"></div>
 	
 	<script>
 	  function getURLParameter(name, source) {
@@ -43,6 +44,7 @@ require_once 'config.php';
 	  }
 
 	  var accessToken = getURLParameter("access_token", location.hash);
+var state = getURLParameter("state", location.hash);
 
 	  if (typeof accessToken === 'string' && accessToken.match(/^Atza/)) {
 		document.cookie = "amazon_Login_accessToken=" + accessToken;
@@ -65,6 +67,7 @@ require_once 'config.php';
 		 }
 		  alert("active");
 		 //active session
+
 		});
 		
 	  };
@@ -72,6 +75,7 @@ require_once 'config.php';
       window.onAmazonLoginReady = function(){
         amazon.Login.setClientId("<?php echo $config['client_id']; ?>");	
 		amazon.Login.setUseCookie(true);
+//amazon.Login.setRegion('EU');
       };
 	  
 	  var paymentRendered = false;
@@ -117,14 +121,14 @@ require_once 'config.php';
 	  
       window.onAmazonPaymentsReady = function() {
          
-		 renderAddressWidget();
-		 
-		 
+//		 renderAddressWidget();
+amazon.Login.setRegion('EU');		 
+document.getElementById("state").innerHTML = "state" + state;
       };
 
 
 </script>
-	<script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>
