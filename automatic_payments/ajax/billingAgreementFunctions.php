@@ -32,6 +32,8 @@ if($action === "setBillingAgreementId"){
     authorizeOnBillingAgreement($data);
 } else if($action === "cleanUp"){
     cleanUp($data);
+}else if($action === "createOrderReferenceForId"){
+    createOrderReferenceForId($data);
 }
 
 function cleanUp($data = null){
@@ -124,17 +126,14 @@ function validateBillingAgreement($data = null){
     
     $response = $client->validateBillingAgreement($requestParameters);
     $result = $response->toArray();
-    print_r($result);
-    /*
+    
     $state = $result['BillingAgreementStatus']['State'];
     $validationResult = $result['ValidationResult'];
     if($state === "Open" && $validationResult === "Success"){
         echo "OK";
     } else {
-        echo "no ".$state;
-//        header('HTTP/1.0 400 Bad Request'); 
+        header('HTTP/1.0 400 Bad Request'); 
     }
-    */
 }
 
 function authorizeOnBillingAgreement($data = null){
@@ -165,4 +164,46 @@ function authorizeOnBillingAgreement($data = null){
     $authState = $authorizationDetails['AuthorizationStatus']['State'];
     $clientInfo = "{\"oroId\": \"".$oroId."\", \"authorizationId\": \"".$authId."\", \"authorizationStatus\": \"".$authState."\", \"reasonCode\": \"".$reasonCode."\"}";
     echo $clientInfo;
+}
+
+function createOrderReferenceForId($data = null){
+    $billingAgreementId = $_SESSION['billingAgreementId'];
+    global $client;
+    global $config;
+    
+    $currency = $data['currency'];
+    $orderTotal = $data['orderTotal'];
+    $sellerOrderId = $data['sellerOrderId'];
+    $storeName = $data['storeName'];
+    $milliseconds = round(microtime(true) * 1000);
+    
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['id'] = $billingAgreementId;
+	$requestParameters['id_type'] = "BillingAgreement";
+	$requestParameters['inherit_shipping_address'] = true;
+	$requestParameters['confirm_now'] = true;
+	$requestParameters['amount'] = $orderTotal;
+	$requestParameters['currency_code'] = $currency;
+	$requestParameters['seller_order_id'] = $sellerOrderId;
+	$requestParameters['store_name'] = $storeName;
+	
+	$response = $client->createOrderReferenceForId($requestParameters);
+	print_r($response);
+    $oroDetails = $response->toArray()['CreateOrderReferenceForIdResult']['OrderReferenceDetails'];
+    
+    echo $oroDetails['AmazonOrderReferenceId'];
+    
+    /*
+    
+    $chargeParams['merchant_id'] = $config['merchant_id'];
+    $chargeParams['amazon_order_reference_id'] = $oroDetails['AmazonOrderReferenceId'];
+    $chargeParams['charge_amount'] = $orderTotal;
+    $chargeParams['currency_code'] = $currency;
+    $chargeParams['authorization_reference_id'] = $data['sellerOrderId'].$milliseconds;
+
+    $response = $client->charge($chargeParams);
+    print_r($response);
+*/
+
 }

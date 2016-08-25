@@ -17,14 +17,7 @@ function proceedToConsent(){
 function confirmPayment(){
     $( "#accordion" ).accordion("option", { active: 4 });
     $("#setupPayment").css("opacity", 1).css("cursor", "pointer").click(setupAutmaticPayment);
-    $("#validateBA").click(function(){
-        $.post("ajax/billingAgreementFunctions.php", {action: "validateBillingAgreement", data :{} }).done(function( data ) {
-                console.log("billing agreement setup and validated");    
-        });
-    
-    });
-    
-    
+    $("#setupOnetimePayment").css("opacity", 1).css("cursor", "pointer").click(setupOnetimePayment);
 }
 
 function handleConsentState(billingAgreementConsentStatus){
@@ -59,6 +52,29 @@ function setupAutmaticPayment(){
             } ).error(function(error){
                 alert("error validating the billing agreement");
             });
+            
+        }
+        ).error(function(error){
+           alert("error confirming the billing agreement");
+        });
+    }
+    ).error(function(error){
+       alert("error setting the billing agreement details");
+    });
+}
+
+function setupOnetimePayment(){
+    var sellerOrderId = $("#sellerOrderId").val();
+    var storeName = $("#storeName").val();
+    var consentToken = $("#tokenContainer").val();
+    // set the order total on the billingAgreement, on success enable the next step
+    $.post("ajax/billingAgreementFunctions.php", {action: "setBillingAgreementDetails", data :{sellerOrderId: sellerOrderId, storeName : storeName, consentToken: consentToken} }).done(function( data ) {
+        console.log(data);
+        var currency = $("#currency").val();
+        var orderTotal = $("#orderTotal").val();
+        $.post("ajax/billingAgreementFunctions.php", {action: "createOrderReferenceForId",  data :{sellerOrderId: sellerOrderId, storeName : storeName, consentToken: consentToken, currency: currency, orderTotal: orderTotal} }).done(function( data ) {
+            
+            console.log(data);
             
         }
         ).error(function(error){
