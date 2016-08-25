@@ -68,7 +68,6 @@ input.container{width: 100%;}
 #proceedToPayment {opacity: 0;}
 #proceedToConsent {opacity: 0;}
 #confirmPayment {opacity: 0;}
-#setupPayment {opacity: 0;}
 
 #contentWrapper {
     width: 100%;
@@ -97,6 +96,7 @@ $(function() {
     $("#proceedToPayment").button();
     $("#proceedToConsent").button();
     $("#setupPayment").button();
+    $("#validateBA").button();
     $("#confirmPayment").button().click(confirmPayment);
     $("#logout").button().click(function(){
         amazon.Login.logout();
@@ -191,6 +191,7 @@ $(function() {
           <br />
           <button id="setupPayment">Start now</button>
         </div>
+        <button id="validateBA">Validate BA</button>
       </div>
     <div id="paymentObjects">
         <h3>Payment Objects</h3>
@@ -216,7 +217,7 @@ $(function() {
 	size: "small",
 	authorization: function() {
 		loginOptions =
-		{scope: "profile postal_code payments:widget payments:shipping_address", popup: "true"};
+		{scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: "true"};
 		authRequest = amazon.Login.authorize(loginOptions,
 		"index.php");
 	},

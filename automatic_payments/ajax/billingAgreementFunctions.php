@@ -1,12 +1,19 @@
 <?php
-
+namespace PayWithAmazon;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 session_start();
-require_once("../lpa.config.php");
+require_once '../config.php';
+require("../PayWithAmazon/Client.php");
+require("../Logger.php");
+
+$client = new Client($config);
+
+$logger = new \Psr\Log\Logger();
+$client->setLogger($logger);
 
 $action = $_REQUEST['action'];
 $data = $_REQUEST['data'];
@@ -35,25 +42,15 @@ function cleanUp($data = null){
 function calculateShipping($data = null){
     $billingAgreementId = $_SESSION['billingAgreementId'];
     $addressConsentToken = $data['accessToken'];
-    global $merchantId;
-    global $client;
     
-    $request = new OffAmazonPaymentsService_Model_GetBillingAgreementDetailsRequest();
-
-    $request->withAmazonBillingAgreementId($billingAgreementId)
-            ->withSellerId($merchantId)
-            ->withAddressConsentToken($addressConsentToken);
-
-    $response = $client->getBillingAgreementDetails($request);
+    $details = getBillingAgreementDetails();
     
-    $details = $response->getGetBillingAgreementDetailsResult()
-            ->getBillingAgreementDetails();
-    $destination = $details->getDestination()->getPhysicalDestination();
+    $destination = $details['Destination']['PhysicalDestination'];
 
     // simulating we are shipping world wide, only DE is more expensive, the rest costs 3.99 fixed
     $shippingCosts = "3.99";
 
-    $countryCode = $destination->getCountryCode();
+    $countryCode = $destination['CountryCode'];
     if($countryCode ==="DE"){
         $shippingCosts = "5.99";
     }
@@ -65,40 +62,39 @@ function getBillingAgreementDetails($data = null){
     $billingAgreementId = $_SESSION['billingAgreementId'];
     $consentToken = $data["consentToken"];
     global $client;
-    global $merchantId;
+    global $config;
     
-    $request = new OffAmazonPaymentsService_Model_GetBillingAgreementDetailsRequest();
-    $request->withAddressConsentToken($consentToken)
-            ->withSellerId($merchantId)
-            ->withAmazonBillingAgreementId($billingAgreementId);
-    $response = $client->getBillingAgreementDetails($request);
-    $billingAgreementDetails = $response->getGetBillingAgreementDetailsResult()->getBillingAgreementDetails();
-    
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['amazon_billing_agreement_id'] = $billingAgreementId;
+	
+	// get the full amount of the authorization
+	$response = $client->getBillingAgreementDetails($requestParameters);
+
+    $billingAgreementDetails = $response->toArray()['GetBillingAgreementDetailsResult']['BillingAgreementDetails'];
     return $billingAgreementDetails;    
 }
 
 function setBillingAgreementDetails($data = null){
     $billingAgreementDetails = getBillingAgreementDetails($data);
-    $state = $billingAgreementDetails->getBillingAgreementStatus()->getState();
+    $state = $billingAgreementDetails['BillingAgreementStatus']['State'];
     if($state === "Draft"){
         $sellerOrderId = $data['sellerOrderId'];
         $storeName = $data['storeName'];
         $billingAgreementId = $_SESSION['billingAgreementId'];
         global $client;
-        global $merchantId;
+        global $config;
 
-        $request = new OffAmazonPaymentsService_Model_SetBillingAgreementDetailsRequest();
-        $sellerAttributes = new OffAmazonPaymentsService_Model_SellerBillingAgreementAttributes();
-        $sellerAttributes->withSellerBillingAgreementId($sellerOrderId)
-                ->withStoreName($storeName);
 
-        $attributes = new OffAmazonPaymentsService_Model_BillingAgreementAttributes($data);
-        $attributes->withSellerBillingAgreementAttributes($sellerAttributes);
 
-        $request->withAmazonBillingAgreementId($billingAgreementId)
-                ->withSellerId($merchantId)
-                ->withBillingAgreementAttributes($attributes);
-        $response = $client->setBillingAgreementDetails($request);
+        $requestParameters['merchant_id'] = $config['merchant_id'];
+        $requestParameters['amazon_billing_agreement_id'] = $billingAgreementId;
+//        $requestParameters['amount'] - [String]
+//        $requestParameters['currency_code'] - [String]
+        $requestParameters['seller_billing_agreement_id'] = $sellerOrderId;
+        $requestParameters['store_name'] = $storeName;
+
+        $client->setBillingAgreementDetails($requestParameters);
         echo "set details to the agreement";
     } else{
         echo "agreement already open, skipping";
@@ -108,74 +104,65 @@ function setBillingAgreementDetails($data = null){
 function confirmBillingAgreement($data = null){
     $billingAgreementId = $_SESSION['billingAgreementId'];
     global $client;
-    global $merchantId;
+    global $config;
     
-    $billingAgreementDetails = getBillingAgreementDetails($data);
-    //if($billingAgreementDetails->getBillingAgreementStatus()->getState() === "Draft"){
-        $request = new OffAmazonPaymentsService_Model_ConfirmBillingAgreementRequest();
-        $request->withSellerId($merchantId)
-                ->withAmazonBillingAgreementId($billingAgreementId);
-
-        $response = $client->confirmBillingAgreement($request);
-        echo "billing agreement confirmed";
-    //} else {
-      //  echo "agreement already confirmed";
-    //}
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['amazon_billing_agreement_id'] = $billingAgreementId;
+    $response = $client->confirmBillingAgreement($requestParameters);
+    echo "billing agreement confirmed";
 }
 
 function validateBillingAgreement($data = null){
     $billingAgreementId = $_SESSION['billingAgreementId'];
     global $client;
-    global $merchantId;
+    global $config;
     
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['amazon_billing_agreement_id'] = $billingAgreementId;
     
-    $request = new OffAmazonPaymentsService_Model_ValidateBillingAgreementRequest();
-    $request->withSellerId($merchantId)
-            ->withAmazonBillingAgreementId($billingAgreementId);
-    
-    $response = $client->validateBillingAgreement($request);
-    $result = $response->getValidateBillingAgreementResult();
-    $state = $result->getBillingAgreementStatus()->getState();
-    $validationResult = $result->getValidationResult();
+    $response = $client->validateBillingAgreement($requestParameters);
+    $result = $response->toArray();
+    print_r($result);
+    /*
+    $state = $result['BillingAgreementStatus']['State'];
+    $validationResult = $result['ValidationResult'];
     if($state === "Open" && $validationResult === "Success"){
         echo "OK";
     } else {
-        header('HTTP/1.0 400 Bad Request'); 
+        echo "no ".$state;
+//        header('HTTP/1.0 400 Bad Request'); 
     }
+    */
 }
 
 function authorizeOnBillingAgreement($data = null){
     $billingAgreementId = $_SESSION['billingAgreementId'];
     global $client;
-    global $merchantId;
+    global $config;
     
     $currency = $data['currency'];
     $orderTotal = $data['orderTotal'];
     $milliseconds = round(microtime(true) * 1000);
-    $authReferenceId = $data['sellerOrderId'].$milliseconds;
-
-    $sellerAttributes = new OffAmazonPaymentsService_Model_SellerOrderAttributes();
-    $sellerAttributes->withSellerOrderId($sellerOrderId)
-            ->withStoreName($storeName);
     
-    $amount = new OffAmazonPaymentsService_Model_Price();
-    $amount->withAmount($orderTotal)
-            ->withCurrencyCode($currency);
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['amazon_billing_agreement_id'] = $billingAgreementId;
+	$requestParameters['authorization_reference_id'] = $data['sellerOrderId'].$milliseconds;
+	$requestParameters['authorization_amount'] = $orderTotal;
+	$requestParameters['currency_code'] = $currency;
+	$requestParameters['store_name'] = $storeName;
+	$requestParameters['seller_order_id'] = $sellerOrderId;
+	
+    $response = $client->authorizeOnBillingAgreement($requestParameters);
+    $result = $response->toArray()['AuthorizeOnBillingAgreementResult'];
     
-    $request = new OffAmazonPaymentsService_Model_AuthorizeOnBillingAgreementRequest();
-    $request->withSellerId($merchantId)
-            ->withAmazonBillingAgreementId($billingAgreementId)
-            ->withSellerOrderAttributes($sellerAttributes)
-            ->withAuthorizationAmount($amount)
-            ->withAuthorizationReferenceId($authReferenceId);
-    
-    $response = $client->authorizeOnBillingAgreement($request);
-    $result = $response->getAuthorizeOnBillingAgreementResult();
-    $authorizationDetails = $result -> getAuthorizationDetails();
-    $oroId = $result ->getAmazonOrderReferenceId();
-    $authId = $authorizationDetails->getAmazonAuthorizationId();
-    $reasonCode = $authorizationDetails->getAuthorizationStatus()->getReasonCode();
-    $authState = $authorizationDetails->getAuthorizationStatus()->getState();
+    $authorizationDetails = $result['AuthorizationDetails'];
+    $oroId = $result['AmazonOrderReferenceId'];
+    $authId = $authorizationDetails['AmazonAuthorizationId'];
+    $reasonCode = $authorizationDetails['AuthorizationStatus']['ReasonCode'];
+    $authState = $authorizationDetails['AuthorizationStatus']['State'];
     $clientInfo = "{\"oroId\": \"".$oroId."\", \"authorizationId\": \"".$authId."\", \"authorizationStatus\": \"".$authState."\", \"reasonCode\": \"".$reasonCode."\"}";
     echo $clientInfo;
 }

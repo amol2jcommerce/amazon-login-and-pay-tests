@@ -17,6 +17,14 @@ function proceedToConsent(){
 function confirmPayment(){
     $( "#accordion" ).accordion("option", { active: 4 });
     $("#setupPayment").css("opacity", 1).css("cursor", "pointer").click(setupAutmaticPayment);
+    $("#validateBA").click(function(){
+        $.post("ajax/billingAgreementFunctions.php", {action: "validateBillingAgreement", data :{} }).done(function( data ) {
+                console.log("billing agreement setup and validated");    
+        });
+    
+    });
+    
+    
 }
 
 function handleConsentState(billingAgreementConsentStatus){
