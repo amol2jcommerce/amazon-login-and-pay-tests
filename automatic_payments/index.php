@@ -293,7 +293,11 @@ input.container{width: 100%;}
     var walletWidget = new OffAmazonPayments.Widgets.Wallet({
 	sellerId: '<?php echo $config['merchant_id']; ?>',
 	// amazonBillingAgreementId obtained from the AddressBook widget
-	amazonBillingAgreementId: billingAgreementId,
+<?php
+    if(isset($_SESSION['billingAgreementId']) && $_SESSION['billingAgreementId'] != ""){
+        echo "amazonBillingAgreementId: \"".$_SESSION['billingAgreementId']."\",\n";
+    }
+ ?>
 	onPaymentSelect: function(billingAgreement) {
             // enable the next step, when a payment method was selected
             $("#proceedToConsent").css("opacity", 1).css("cursor", "pointer");
