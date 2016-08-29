@@ -74,6 +74,7 @@ require_once 'config.php';
         amazon.Login.setClientId("<?php echo $config['client_id']; ?>");	
       };
       window.onAmazonPaymentsReady = function() {
+         $("#placeOrder").click(processPayment);
          renderButton();
       };
 
@@ -109,6 +110,8 @@ require_once 'config.php';
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $config['merchant_id']?>',
             onOrderReferenceCreate: function(orderReference) {
+              console.log("in address widget");
+              console.log(orderReference);
               orderReferenceId = orderReference.getAmazonOrderReferenceId();
             },
             onAddressSelect: function(orderReference) {
@@ -132,9 +135,9 @@ require_once 'config.php';
             onPaymentSelect: function(event) {
               // Replace this code with the action that you want to perform
               // after the payment method is selected.
+              console.log("in address widget");
               console.log(event);
               showSimulationField();
-              $("#placeOrder").click(processPayment);
               $("#placeOrder").removeClass("hidden");
             },
             design: {
@@ -163,7 +166,7 @@ require_once 'config.php';
 	  function processPayment(){
 	    $.post("backend.php", {action: "processPayment", data :{ orderReferenceId: orderReferenceId, simulationString: $("#simulationString").val()} }).done(function( data ) {
         console.log(data);
-        logout();
+       
         alert("Please check Seller Central for results. Status page not yet implemented");
         window.location.reload();
       }).fail(function(error){
