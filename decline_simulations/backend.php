@@ -41,7 +41,7 @@ if($action === "processPayment"){
     $requestParameters = array();
 	$requestParameters['merchant_id'] = $config['merchant_id'];
 	$requestParameters['amazon_order_reference_id'] = $oroId;
-    $client->closeOrderReference($requestParameters);
+   // $client->closeOrderReference($requestParameters);
     
     echo "OK";
 } 
