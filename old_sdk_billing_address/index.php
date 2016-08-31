@@ -1,5 +1,5 @@
 <?php
-include("config.inc.php");
+require_once("lpa.config.php");
 
 ?>
 <html>
@@ -35,12 +35,12 @@ include("config.inc.php");
 						<td align="right">Scopes</td>
 						<td>&nbsp;</td>
 						<td>
-							<select name="scopes[]" id="scopes" multiple="multiple">
+							<select name="scopes[]" id="scopes" multiple="multiple" size="5">
 								<option value="payments:widget" selected="selected">payments:widget</option>
-								<option value="profile">profile</option>
+								<option value="profile" selected="selected">profile</option>
 								<option value="postal_code">postal_code</option>
-								<option value="payments:shipping_address">payments:shipping_address</option>
-								<option value="payments:billing_address">payments:billing_address</option>
+								<option value="payments:shipping_address" selected="selected">payments:shipping_address</option>
+								<option value="payments:billing_address" selected="selected">payments:billing_address</option>
 							</select>
 						</td>
 						<td>Width:</td>

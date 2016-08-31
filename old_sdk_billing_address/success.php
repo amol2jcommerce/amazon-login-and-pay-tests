@@ -1,6 +1,5 @@
 <?php
-include("config.inc.php");
-require_once("SDK-php-1.0.11_DE/src/OffAmazonPaymentsService/Samples/.config.inc.php");
+include("lpa.config.php");
 ?>
 <html>
 	<head>
@@ -15,7 +14,7 @@ require_once("SDK-php-1.0.11_DE/src/OffAmazonPaymentsService/Samples/.config.inc
 		
 		<script type='text/javascript'>
 		  window.onAmazonLoginReady = function() {
-			amazon.Login.setClientId('amzn1.application-oa2-client.c99387f150104b63b64919c18c0980a6');
+			amazon.Login.setClientId('<?php echo $clientId; ?>');
 		  };
 		</script>
 		<script type='text/javascript' src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'></script>
@@ -78,7 +77,7 @@ require_once("SDK-php-1.0.11_DE/src/OffAmazonPaymentsService/Samples/.config.inc
 		$client = new OffAmazonPaymentsService_Client();
 		echo ("<br /><br />Trying to get the selected delivery address ...\n\n<br /><br />");
 		$getOrderReferenceDetailsRequest = new OffAmazonPaymentsService_Model_GetOrderReferenceDetailsRequest();
-		$getOrderReferenceDetailsRequest->setSellerId($sellerId); 
+		$getOrderReferenceDetailsRequest->setSellerId($merchantId); 
 		$getOrderReferenceDetailsRequest->setAmazonOrderReferenceId($oro);
 		$getOrderReferenceDetailsRequest->setAddressConsentToken($accessToken);
 		$referenceDetailsResultWrapper = $client->getOrderReferenceDetails($getOrderReferenceDetailsRequest);

@@ -1,5 +1,5 @@
 <?php
-require_once("config.inc.php");
+require_once("lpa.config.php");
 
 ?>
 <html>
@@ -14,7 +14,7 @@ require_once("config.inc.php");
 		
 		<script type='text/javascript'>
 		  window.onAmazonLoginReady = function() {
-			amazon.Login.setClientId('amzn1.application-oa2-client.c99387f150104b63b64919c18c0980a6');
+			amazon.Login.setClientId('<?php echo $clientId; ?>');
 		  };
 		</script>
 		<script type='text/javascript' src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'></script>
@@ -25,13 +25,17 @@ require_once("config.inc.php");
 	if(isset($_GET['access_token'])){
 		$accessToken = $_GET['access_token'];
 ?>
-
+<textarea id="access_token" cols="250" rows="4" onClick="this.setSelectionRange(0, this.value.length)"></textarea>
+<script type="text/javascript">
+	document.getElementById("access_token").value = "<?php echo $accessToken; ?>";;
+</script>
+<br />
 <div id="addressBookWidgetDiv">
 </div> 
 	<script>
 	var oro = '';
 		new OffAmazonPayments.Widgets.AddressBook({
-		  sellerId: '<?php echo $sellerId; ?>',
+		  sellerId: '<?php echo $merchantId; ?>',
 		  onOrderReferenceCreate: function(orderReference) {
 				   oro = orderReference.getAmazonOrderReferenceId();
 		  },
@@ -47,7 +51,7 @@ require_once("config.inc.php");
 		}).bind("addressBookWidgetDiv");
 	</script>
 	
-	<a href="success.php?access_token=<?php echo $accessToken; ?>" onclick="location.href=this.href + '&oro=' + oro; return false;">weiter</a>
+	<a href="/old_sdk_billing_address/success.php?access_token=<?php echo $accessToken; ?>" onclick="location.href=this.href + '&oro=' + oro; return false;">weiter</a>
 <?php
 	
 	}
