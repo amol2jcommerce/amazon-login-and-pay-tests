@@ -84,7 +84,7 @@ require_once("lpa.config.php");
 	// make sure e are logged out
 	amazon.Login.logout();
 	  var authRequest;
-	  OffAmazonPayments.Button("AmazonPayButton", "<?php echo $sellerId; ?>", {
+	  OffAmazonPayments.Button("AmazonPayButton", "<?php echo $merchantId; ?>", {
 		type:  "PwA",
 		color: "Gold",
 <?php
