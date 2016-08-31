@@ -16,4 +16,3 @@ $applicationVersion='';
 //$caBundleFile='/etc/conf/certs/caCertFile.crt'; // Uncomment to enable caCertFile for unix
 //$caBundleFile='C:\work\scripts\ca-bundle.crt';  // Uncomment to enable caCertFile for windows
 ?>
-git status+
