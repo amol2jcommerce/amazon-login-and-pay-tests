@@ -30,6 +30,11 @@ if($action === "processPayment"){
     $requestParameters = array();
 	$requestParameters['merchant_id'] = $config['merchant_id'];
 	$requestParameters['amazon_order_reference_id'] = $oroId;
+    $client->getOrderReferenceDetails($requestParameters);
+    
+    $requestParameters = array();
+	$requestParameters['merchant_id'] = $config['merchant_id'];
+	$requestParameters['amazon_order_reference_id'] = $oroId;
 	$requestParameters['authorization_amount'] = "1234";
 	$requestParameters['currency_code'] = "GBP";
 	$milliseconds = round(microtime(true) * 1000);

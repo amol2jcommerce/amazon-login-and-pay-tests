@@ -55,7 +55,8 @@ require_once 'config.php';
             authRequest = amazon.Login.authorize (loginOptions, customerAuthorized);
           },
           onError: function(error) {
-            console.log(error);
+            console.log(error.getErrorMessage());
+            console.log(error.getErrorCode());
           }
         });
      }
@@ -69,7 +70,7 @@ require_once 'config.php';
       var orderReferenceId;
       function renderAddressWidget(){
         new OffAmazonPayments.Widgets.AddressBook({
-            sellerId: '<?php echo $config['merchant_id']?>',
+            sellerId: '<?php echo $config["merchant_id"]?>',
             onOrderReferenceCreate: function(orderReference) {
               orderReferenceId = orderReference.getAmazonOrderReferenceId();
             },
@@ -90,7 +91,7 @@ require_once 'config.php';
       var walletWidget;
       function renderPaymentWidget(){
         walletWidget = new OffAmazonPayments.Widgets.Wallet({
-            sellerId: '<?php echo $config['merchant_id']?>',
+            sellerId: '<?php echo $config["merchant_id"]?>',
             onPaymentSelect: function(orderReference) {
               // Replace this code with the action that you want to perform
               // after the payment method is selected.
@@ -99,7 +100,7 @@ require_once 'config.php';
               designMode: 'responsive'
             },
             onError: function(error) {
-              console.log(error);
+              console.log(error.getErrorMessage());
             }
           }).bind("login_with_amazon_payment_widget");
           
