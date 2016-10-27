@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+require_once '../../config.php';
 ?>
 <div id="login_with_amazon_button"></div>
     <script>
@@ -32,5 +32,5 @@ require_once '../config.php';
     </script>
 
 <script async='async' type='text/javascript' 
-src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'>
+src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'>
 </script> 

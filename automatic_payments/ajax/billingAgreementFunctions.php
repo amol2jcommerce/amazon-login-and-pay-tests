@@ -131,9 +131,10 @@ function validateBillingAgreement($data = null){
     $validationResult = $result['ValidationResult'];
     if($state === "Open" && $validationResult === "Success"){
         echo "OK";
-    } else {
-        header('HTTP/1.0 400 Bad Request'); 
-    }
+    } 
+    //else {
+    //    header('HTTP/1.0 400 Bad Request'); 
+    //}
 }
 
 function authorizeOnBillingAgreement($data = null){

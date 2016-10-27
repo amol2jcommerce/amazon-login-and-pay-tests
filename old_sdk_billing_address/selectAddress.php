@@ -6,7 +6,7 @@ require_once("lpa.config.php");
 	<head>
 		<style type="text/css">
 			
-			#addressBookWidgetDiv{
+			#addressBookWidgetDiv, #walletWidgetDiv{
 				width: 400px; 
 				height: 228px;
 			}
@@ -32,6 +32,8 @@ require_once("lpa.config.php");
 <br />
 <div id="addressBookWidgetDiv">
 </div> 
+<div id="walletWidgetDiv">
+</div> 
 	<script>
 	var oro = '';
 		new OffAmazonPayments.Widgets.AddressBook({
@@ -49,6 +51,20 @@ require_once("lpa.config.php");
 		   // your error handling code
 		  }
 		}).bind("addressBookWidgetDiv");
+		
+		new OffAmazonPayments.Widgets.Wallet({
+            sellerId: '<?php echo $merchantId; ?>',
+            onPaymentSelect: function(orderReference) {
+              // Replace this code with the action that you want to perform
+              // after the payment method is selected.
+            },
+            design: {
+              designMode: 'responsive'
+            },
+            onError: function(error) {
+              console.log(error);
+            }
+          }).bind("walletWidgetDiv");
 	</script>
 	
 	<a href="/old_sdk_billing_address/success.php?access_token=<?php echo $accessToken; ?>" onclick="location.href=this.href + '&oro=' + oro; return false;">weiter</a>

@@ -95,6 +95,10 @@ include("lpa.config.php");
 	echo ("CountryCode: \t" . $physicalDestination->GetCountryCode() . "\n<br />");
 	echo ("Phone: \t\t" . $physicalDestination->GetPhone() . "\n\n<br /><br />");	
 	echo ("\n<br>Retrieved selected address.\n<br>");
+	
+	print_r($referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails());
+	//$physicalDestination = $referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails()->getBillingAddress()->getPhysicalDestination();
+	
 	}
 ?>
 <br />
