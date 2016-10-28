@@ -1,5 +1,5 @@
 <?php
-$sdkPath = "SDK-php-1.0.11_DE";
+$sdkPath = "Legacy_DE";
 $incPath = get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)) . "/" . $sdkPath . "/src";
 
 set_include_path($incPath);    
