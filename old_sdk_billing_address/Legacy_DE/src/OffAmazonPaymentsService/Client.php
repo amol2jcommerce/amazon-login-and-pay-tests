@@ -113,10 +113,15 @@ class OffAmazonPaymentsService_Client implements OffAmazonPaymentsService_Interf
      */
     public function __construct($config = null)
     {
-        iconv_set_encoding('output_encoding', 'UTF-8');
-        iconv_set_encoding('input_encoding', 'UTF-8');
-        iconv_set_encoding('internal_encoding', 'UTF-8');
-        
+        if(version_compare(PHP_VERSION, '5.6.0') < 0)
+        {
+            iconv_set_encoding('output_encoding', 'UTF-8');
+            iconv_set_encoding('input_encoding', 'UTF-8');
+            iconv_set_encoding('internal_encoding', 'UTF-8');
+        } else {
+           ini_set('default_charset', 'UTF-8');
+        }
+
         $this->_merchantValues     = OffAmazonPaymentsService_MerchantValuesBuilder::create($config)->build();
         $this->_httpRequestFactory = new HttpRequestFactoryCurlImpl($this->_merchantValues);
     }

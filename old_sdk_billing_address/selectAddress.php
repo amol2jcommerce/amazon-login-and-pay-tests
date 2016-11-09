@@ -67,7 +67,7 @@ require_once("lpa.config.php");
           }).bind("walletWidgetDiv");
 	</script>
 	
-	<a href="/old_sdk_billing_address/success.php?access_token=<?php echo $accessToken; ?>" onclick="location.href=this.href + '&oro=' + oro; return false;">weiter</a>
+	<a href="success.php?access_token=<?php echo $accessToken; ?>" onclick="location.href=this.href + '&oro=' + oro; return false;">weiter</a>
 <?php
 	
 	}

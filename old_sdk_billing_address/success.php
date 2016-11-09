@@ -1,3 +1,9 @@
+<?php 
+echo PHP_VERSION_ID;
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+?>
 <?php
 include("lpa.config.php");
 ?>
@@ -75,7 +81,7 @@ include("lpa.config.php");
 		
 		// create the client to issue the getORODetails call
 		$client = new OffAmazonPaymentsService_Client();
-		echo ("<br /><br />Trying to get the selected delivery address ...\n\n<br /><br />");
+		echo ("<br /><br />Trying to get the selected delivery and billing address ...\n\n<br /><br />");
 		$getOrderReferenceDetailsRequest = new OffAmazonPaymentsService_Model_GetOrderReferenceDetailsRequest();
 		$getOrderReferenceDetailsRequest->setSellerId($merchantId); 
 		$getOrderReferenceDetailsRequest->setAmazonOrderReferenceId($oro);
@@ -83,6 +89,7 @@ include("lpa.config.php");
 		$referenceDetailsResultWrapper = $client->getOrderReferenceDetails($getOrderReferenceDetailsRequest);
 		$physicalDestination = $referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails()->getDestination()->getPhysicalDestination();
 	
+        echo "<h2>Shipping Address</h2><br />";
 	echo ("Name: \t\t" . $physicalDestination->GetName() . "\n<br />");
 	echo ("AddressLine1: \t" . $physicalDestination->GetAddressLine1() . "\n<br />");	
 	echo ("AddressLine2: \t" . $physicalDestination->GetAddressLine2() . "\n<br />");	
@@ -94,15 +101,71 @@ include("lpa.config.php");
 	echo ("PostalCode: \t" . $physicalDestination->GetPostalCode() . "\n<br />");
 	echo ("CountryCode: \t" . $physicalDestination->GetCountryCode() . "\n<br />");
 	echo ("Phone: \t\t" . $physicalDestination->GetPhone() . "\n\n<br /><br />");	
+
+
+        echo "<h2>Billing Address</h2><br />";
+        $billingAddress = $referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails()->getBillingAddress()->getPhysicalAddress();
+        echo ("Name: \t\t" . $billingAddress->GetName() . "\n<br />");
+        echo ("AddressLine1: \t" . $billingAddress->GetAddressLine1() . "\n<br />");
+        echo ("AddressLine2: \t" . $billingAddress->GetAddressLine2() . "\n<br />");
+        echo ("AddressLine3: \t" . $billingAddress->GetAddressLine3() . "\n<br />");
+        echo ("City: \t\t" . $billingAddress->GetCity() . "\n<br />");
+        echo ("County: \t\t" . $billingAddress->GetCounty() . "\n<br />");
+        echo ("District: \t\t" . $billingAddress->GetDistrict() . "\n<br />");
+        echo ("StateOrRegion: \t\t" . $billingAddress->GetStateOrRegion() . "\n<br />");
+        echo ("PostalCode: \t" . $billingAddress->GetPostalCode() . "\n<br />");
+        echo ("CountryCode: \t" . $billingAddress->GetCountryCode() . "\n<br />");
+        echo ("Phone: \t\t" . $billingAddress->GetPhone() . "\n\n<br /><br />");
+
 	echo ("\n<br>Retrieved selected address.\n<br>");
-	
-	print_r($referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails());
-	//$physicalDestination = $referenceDetailsResultWrapper->GetOrderReferenceDetailsResult->getOrderReferenceDetails()->getBillingAddress()->getPhysicalDestination();
-	
+
+        echo "<br />Setting ORO Details<br />";
+        $setOrderReferenceDetailsRequest = new OffAmazonPaymentsService_Model_SetOrderReferenceDetailsRequest();
+        $setOrderReferenceDetailsRequest->setSellerId($merchantId);
+        $setOrderReferenceDetailsRequest->setAmazonOrderReferenceId($oro);
+        $attributes = new OffAmazonPaymentsService_Model_OrderReferenceAttributes();
+        $orderTotal = new OffAmazonPaymentsService_Model_OrderTotal();
+        $orderTotal->withCurrencyCode($currencyCode)->withAmount(100);
+        $attributes ->withOrderTotal($orderTotal);
+        $setOrderReferenceDetailsRequest->setOrderReferenceAttributes($attributes);
+        $referenceDetailsResultWrapper = $client->setOrderReferenceDetails($setOrderReferenceDetailsRequest);
+
+        echo "<br />Confirming the ORO<br />";
+        $confirmOrderReferenceRequest = new OffAmazonPaymentsService_Model_ConfirmOrderReferenceRequest();
+        $confirmOrderReferenceRequest->setSellerId($merchantId);
+        $confirmOrderReferenceRequest->setAmazonOrderReferenceId($oro);
+        $resultWrapper = $client->confirmOrderReference($confirmOrderReferenceRequest);
+
+        echo "<br />Oro confirmed<br />";
+
+        echo "<br />Authorizing and capturing<br />";
+        $request = new OffAmazonPaymentsService_Model_AuthorizeRequest();
+        $request->withSellerId($merchantId)->withAmazonOrderReferenceId($oro)->withAuthorizationReferenceId(str_replace(" ", "", str_replace(".", "-", "o-".microtime())))->withAuthorizationAmount($orderTotal)->withCaptureNow(true);
+        $resultWrapper = $client->authorize($request);
+
+        $captureId = $resultWrapper->AuthorizeResult->getAuthorizationDetails()->getIdList()->getmember()[0];
+
+
+        echo "<br />Closing the ORO<br />";
+        $request = new OffAmazonPaymentsService_Model_CloseOrderReferenceRequest();
+        $request->withSellerId($merchantId)->withAmazonOrderReferenceId($oro);
+        $resultWrapper = $client->closeOrderReference($request);
+
+        echo "<br />Refunding the ORO<br />";
+        $request = new OffAmazonPaymentsService_Model_RefundRequest();
+        $request->withSellerId($merchantId)->withAmazonCaptureId($captureId)->withRefundReferenceId(str_replace(" ", "", str_replace(".", "-", "r-".microtime())))->withRefundAmount($orderTotal);
+        $resultWrapper = $client->refund($request);
+
+
+
+
 	}
 ?>
 <br />
 <a href = "index.php">Start over again </a>
 		
+
+<?php phpinfo() ?>
+
 	</body>
 </html>

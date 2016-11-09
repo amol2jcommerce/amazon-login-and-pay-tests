@@ -12,7 +12,8 @@ require_once 'OffAmazonPaymentsService/Model/SellerBillingAgreementAttributes.ph
 require_once 'OffAmazonPaymentsService/Model/Price.php';
 require_once 'OffAmazonPaymentsService/Model/AuthorizationDetails.php';
 require_once 'OffAmazonPaymentsService/Model/SellerOrderAttributes.php';
-
+require_once 'OffAmazonPaymentsService/Model/OrderReferenceAttributes.php';
+require_once 'OffAmazonPaymentsService/Model/OrderTotal.php';
 
 $client = new OffAmazonPaymentsService_Client();
 $merchantId = $client->getMerchantValues()->getMerchantId();
