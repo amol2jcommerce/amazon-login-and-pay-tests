@@ -9,6 +9,11 @@ session_start();
     $currency = "GBP";
     $sellerOrderId = "112233-";
     $storeName = "My awesome automatic store";
+    
+    $agreementType = "OrderReference";
+    if(isset($_GET['agreementType'])){
+        $agreementType = $_GET['agreementType'];
+    }
 ?>
 
 <input id="currency" type="hidden" value="<?php echo $currency; ?>" />
@@ -28,7 +33,7 @@ if(isset($_GET['access_token'])){
 <script type='text/javascript' src='js/jquery-ui/external/jquery/jquery.js'></script>
 <script type='text/javascript' src='js/jquery-ui/jquery-ui.js'></script>
 
-<meta name="viewport" content="width-device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"/>
 <style type="text/css">
 #addressBookWidgetDiv {min-width: 300px; max-width: 600px; min-height:
 228px; max-height: 400px;}
@@ -224,25 +229,11 @@ input.container{width: 100%;}
     type: "pwa",
 	color: "gold",
 	size: "small",
-	agreementType: 'BillingAgreement',
-	useAmazonAddressBook: true,
 	
 	authorization: function() {
 		loginOptions =
 		{scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: "true"};
-		authRequest = amazon.Login.authorize(loginOptions, signedIn);
-	},
-	onSignIn: function (contract) {
-        billingAgreementId = contract.getAmazonBillingAgreementId();
-        // store it on the server
-        $.post("ajax/billingAgreementFunctions.php", {action: "setBillingAgreementId", data :{ billingAgreementId: billingAgreementId} }).done(function( data ) {
-            console.log("ba id: " + billingAgreementId  );
-            window.location = "index.php?access_token=" + accessToken;
-            }).error(function(error){
-                displayError("billingAbreementId was not set on server");
-            });
-	
-		
+		authRequest = amazon.Login.authorize(loginOptions, window.location.href);
 	},
 	onError: function(error) {
     	// your error handling code
@@ -251,22 +242,28 @@ input.container{width: 100%;}
 	});
         
         
-        
 	var addressBookWidget = new OffAmazonPayments.Widgets.AddressBook({
 	sellerId: "<?php echo $config['merchant_id']; ?>",
-	agreementType: 'BillingAgreement',
-<?php
-    if(isset($_SESSION['billingAgreementId']) && $_SESSION['billingAgreementId'] != ""){
-        echo "amazonBillingAgreementId: \"".$_SESSION['billingAgreementId']."\",\n";
-    }
- ?>
+	agreementType: '<?php echo $agreementType; ?>',
 	onReady: function(contract) {
         // when receiving a billing agreement id, enter it in the text field for reference, 
         // add it to the consent widget
-        billingAgreementId = contract.getAmazonBillingAgreementId();
+        var getContractId = contract.getAmazonBillingAgreementId === undefined ? contract.getAmazonOrderReferenceId : contract.getAmazonBillingAgreementId;
+        billingAgreementId = getContractId();
+        // store it on the server
+        $.post("ajax/billingAgreementFunctions.php", {action: "setBillingAgreementId", data :{ billingAgreementId: billingAgreementId} }).done(function( data ) {
+            console.log("ba id: " + billingAgreementId);
+        }).error(function(error){
+                displayError("billingAbreementId was not set on server");
+            });
         $("#idContainer").val(billingAgreementId);
+<?php 
+    if($agreementType === "BillingAgreement"){
+?>
         consentWidget.setContractId(billingAgreementId);
-            
+<?php
+    }
+?>
 	},
 	onAddressSelect: function(billingAgreement) {
             // when an address was selected, calculate some shipping costs on the server, 
@@ -292,12 +289,6 @@ input.container{width: 100%;}
 
     var walletWidget = new OffAmazonPayments.Widgets.Wallet({
 	sellerId: '<?php echo $config['merchant_id']; ?>',
-	// amazonBillingAgreementId obtained from the AddressBook widget
-<?php
-    if(isset($_SESSION['billingAgreementId']) && $_SESSION['billingAgreementId'] != ""){
-        echo "amazonBillingAgreementId: \"".$_SESSION['billingAgreementId']."\",\n";
-    }
- ?>
 	onPaymentSelect: function(billingAgreement) {
             // enable the next step, when a payment method was selected
             $("#proceedToConsent").css("opacity", 1).css("cursor", "pointer");
@@ -311,7 +302,9 @@ input.container{width: 100%;}
 	}
     });
         
-        
+<?php
+    if($agreementType == "BillingAgreement"){
+?>
     var buyerBillingAgreementConsentStatus;
 	var consentWidget = new OffAmazonPayments.Widgets.Consent({
 	sellerId: '<?php echo $config['merchant_id']; ?>',
@@ -337,6 +330,9 @@ input.container{width: 100%;}
 	}
     });
     
+<?php
+    }
+?>
     function displayError(error){
         console.log(error);
     }
