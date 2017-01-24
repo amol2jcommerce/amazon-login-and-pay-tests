@@ -3,38 +3,25 @@ require_once 'config.php';
 ?>
 <html>
   <head>
- <title>Redirect - button</title>
+ <title>Redirect - Experience</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   
-  <style type="text/css">
-        /* Please include the min-width, max-width, min-height and max-height	 */
-        /* if you plan to use a relative CSS unit measurement to make sure the */
-        /* widget renders in the optimal size allowed.							           */
 
-        #login_with_amazon_address_widget {min-width: 300px; max-width: 600px; min-height:
-        228px; max-height: 400px;}
-        #login_with_amazon_payment_widget {min-width: 300px; max-width:600px; min-height: 228px;
-        max-height: 400px;}
-
-        /* Smartphone and small window */
-        #login_with_amazon_address_widget {width: 100%; height: 228px;}
-        #login_with_amazon_payment_widget {width: 100%; height: 228px;}
-
-        /* Desktop and tablet */
-        @media only screen and (min-width: 768px) {
-            #login_with_amazon_address_widget {width: 400px; height: 228px;}
-            #login_with_amazon_payment_widget {width: 400px; height: 228px;}
-        }
-</style>
+      <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/base-min.css">
+      <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
   </head>
 <body>
-
+  <h1>Redirect experience</h1>
+  <p>
+    This button will ask you to sign-in using the redirect experience. The integration follows the best practices given in the official AmazonPay integration guide.
+    <br />Exception: The state parameter is fixed in this sample. For security reasons this should not be the case, please check the Request Frogery section of the guide for this.
+  </p>
 	<div id="login_with_amazon_button"></div>
 	
 	<script>
       window.onAmazonLoginReady = function(){
         amazon.Login.setClientId("<?php echo $config['client_id']; ?>");	
-		amazon.Login.setUseCookie(true);
+        amazon.Login.setUseCookie(true);
       };
 	  
       window.onAmazonPaymentsReady = function() {
@@ -44,24 +31,24 @@ require_once 'config.php';
     function renderButton(){
         var authRequest;
         OffAmazonPayments.Button("login_with_amazon_button", "<?php echo $config['merchant_id']; ?>", {
-          type:  "LwA",
+          type:  "PwA",
           color: "Gold",
           size:  "large",
           language: "en-gb",
 
           authorization: function() {
             loginOptions =
-              {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: false, state: "bubu"};
-            authRequest = amazon.Login.authorize (loginOptions, "widgets.php");
+              {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: false, state: "this should not be fixed"};
+              authRequest = amazon.Login.authorize (loginOptions, "widgets.php");
           },
           onError: function(error) {
-            console.log(error);
+            console.log(error.getErrorMessage());
           }
         });
      }
 
 </script>
-	<script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>

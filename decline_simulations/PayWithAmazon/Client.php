@@ -1515,7 +1515,8 @@ class Client implements ClientInterface, LoggerAwareInterface
                     );
 
                     $statusCode = $response['Status'];
-            if ($statusCode == 200) {
+            
+                    if ($statusCode == 200) {
                         $shouldRetry    = false;
                         $this->success = true;
                     } elseif ($statusCode == 500 || $statusCode == 503) {
