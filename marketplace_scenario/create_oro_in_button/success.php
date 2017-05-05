@@ -45,7 +45,7 @@
 	 
 	  
     window.onAmazonLoginReady = function(){
-        amazon.Login.setClientId("amzn1.application-oa2-client.3af7115907cf43f28c3fa8590cc3ef0b");	
+        amazon.Login.setClientId("amzn1.application-oa2-client.8d5f99bf3e31412f97756d7d928a3ce1");	
       };
 	  
       window.onAmazonPaymentsReady = function() {
@@ -59,11 +59,8 @@
         });
       
       new OffAmazonPayments.Widgets.AddressBook({
-            sellerId: 'A3IWQXFKXS2WSY',
-            onOrderReferenceCreate: function(orderReference) {
-              orderReferenceId = orderReference.getAmazonOrderReferenceId();
-              console.log(orderReferenceId);
-            },
+            sellerId: 'A1XCVOHP3URKFF',
+            amazonOrderReferenceId: '<?php echo $_GET["oro"]; ?>',
             onAddressSelect: function(orderReference) {
             
             },
@@ -77,8 +74,7 @@
                
       };
 </script>
-	<script src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
-	<script src="https://eu.account.amazon.com/lwa/js/sdk/login1.beta.js"></script>
+	<script async="async" src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>

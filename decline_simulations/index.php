@@ -81,10 +81,10 @@ require_once 'config.php';
     function renderButton(){
         var authRequest;
         OffAmazonPayments.Button("login_with_amazon_button", "<?php echo $config['merchant_id']; ?>", {
-          type:  "LwA",
+          type:  "PwA",
           color: "Gold",
           size:  "large",
-          language: "en-gb",
+          language: "en-GB",
 
           authorization: function() {
             loginOptions =

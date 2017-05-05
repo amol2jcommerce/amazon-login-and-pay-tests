@@ -22,17 +22,21 @@
 	
 	<script>
       window.onAmazonLoginReady = function(){
-        amazon.Login.setClientId("amzn1.application-oa2-client.3af7115907cf43f28c3fa8590cc3ef0b");	
+        amazon.Login.setClientId("amzn1.application-oa2-client.8d5f99bf3e31412f97756d7d928a3ce1");	
       };
 	  
       window.onAmazonPaymentsReady = function() {
          renderMPButton();
          renderMerchantButton();
       };
+      
+      function signedIn(){
+        
+      }
 
     function renderMPButton(){
         var authRequest;
-        OffAmazonPayments.Button("login_with_amazon_button", "A1P8WV11EWOP9H", {
+        OffAmazonPayments.Button("login_with_amazon_button", "ABEHN0MDIQQOW", {
           type:  "LwA",
           color: "Gold",
           size:  "large",
@@ -41,17 +45,22 @@
           authorization: function() {
             loginOptions =
               {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: true};
-            authRequest = amazon.Login.authorize (loginOptions, "success.php");
+            authRequest = amazon.Login.authorize (loginOptions, signedIn);
           },
           onError: function(error) {
             console.log(error);
+          },
+          onSignIn: function(oro){
+            var oroId= oro.getAmazonOrderReferenceId()
+            console.log(oroId);
+            document.location = "success.php?oro=" + oroId;
           }
         });
      }
      
      function renderMerchantButton(){
         var authRequest;
-        OffAmazonPayments.Button("login_with_amazon_button_2", "A3IWQXFKXS2WSY", {
+        OffAmazonPayments.Button("login_with_amazon_button_2", "A1XCVOHP3URKFF", {
           type:  "PwA",
           color: "Gold",
           size:  "large",
@@ -60,16 +69,21 @@
           authorization: function() {
             loginOptions =
               {scope: "profile payments:widget payments:shipping_address payments:billing_address", popup: true};
-            authRequest = amazon.Login.authorize (loginOptions, "success.php");
+            authRequest = amazon.Login.authorize (loginOptions, signedIn);
           },
           onError: function(error) {
             console.log(error);
+          },
+           onSignIn: function(oro){
+            var oroId= oro.getAmazonOrderReferenceId()
+            console.log(oroId);
+            document.location = "success.php?oro=" + oroId;
           }
         });
      }
 
 </script>
-	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>

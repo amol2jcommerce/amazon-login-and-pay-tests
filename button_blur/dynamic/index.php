@@ -103,7 +103,7 @@ include("config.php");
     var environment= "sandbox";
     var region = "<?php echo $config['region']; ?>".toLowerCase();
     
-    var imgSrc = "https://images-na.ssl-images-amazon.com/images/G/01/EP/offAmazonPayments/$region$/$language$/$environment$prod/image/lwa/$color$/$size$/$type$.png";
+    var imgSrc = "https://d23yuld0pofhhw.cloudfront.net/$region$/$environment$/amazonpay/$color$/$size$/button.png";
     
     <?php 
     if(isset($_POST["color"])){ echo "color = \"".$_POST["color"]."\";";} 
@@ -161,7 +161,7 @@ include("config.php");
         $.each(environments, function(key, value) {
             var selected = environment == value;
                 if(selected){
-                    var replacement = value + "/";
+                    var replacement = value;
                     imgSrc = imgSrc.replace("$environment$", replacement);
                     $("#environment").append('<option value=' + value + ' selected="selected">' + key + '</option>');
                 } else {
@@ -221,12 +221,16 @@ include("config.php");
                 }
             });
             
+            $("#amazon_pay_button img").removeClass("blur").addClass("clickable");
+
             if (clickCatched) {
                 // this ends in a popup blocker
                 $("#amazon_pay_button").children("img").click();
                 clickCatched = false;
             }
+            
         }
+        
         
         var widgetsjsUrl = widgetsjsUrls[region][environment];
         $("body").append("<script async='async' src='" + widgetsjsUrl + "'><\/script>");
