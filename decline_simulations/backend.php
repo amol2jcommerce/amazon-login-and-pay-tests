@@ -19,7 +19,7 @@ if($action === "processPayment"){
 	$requestParameters['amazon_order_reference_id'] = $oroId;
 	$requestParameters['amount'] = "1234";
 	$requestParameters['currency_code'] = "GBP";
-    $requestParameters['seller_note'] = $data["simulationString"];
+    $requestParameters['seller_note'] = "seller note";//$data["simulationString"];
     $client->setOrderReferenceDetails($requestParameters);
     
     $requestParameters = array();
@@ -40,7 +40,9 @@ if($action === "processPayment"){
 	$milliseconds = round(microtime(true) * 1000);
 	$requestParameters['authorization_reference_id'] = $oroId.$milliseconds;
 	$requestParameters['seller_authorization_note'] = $data["simulationString"];
-	$requestParameters['transaction_timeout'] = 5;
+	$requestParameters['transaction_timeout'] = 0;
+	$requestParameters['capture_now'] = true;
+	
 
     $client->authorize($requestParameters);
     
