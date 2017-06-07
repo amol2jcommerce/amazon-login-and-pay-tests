@@ -1,8 +1,10 @@
-<?php namespace Psr\Log;
-require("PayWithAmazon/Psr/Log/AbstractLogger.php");
+<?php namespace PSR\Log;
+require_once("PayWithAmazon/Psr/Log/AbstractLogger.php");
+require_once("PayWithAmazon/Psr/Log/LogLevel.php");
+use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
 
-
-class Logger extends AbstractLogger {
+class Logger extends \Psr\Log\AbstractLogger {
 
     /**
      * Logs with an arbitrary level.

@@ -1,7 +1,6 @@
 <?php
 
 namespace Psr\Log;
-require("LogLevel.php");
 
 /**
  * This is a simple Logger implementation that other Loggers can inherit from.
@@ -124,6 +123,6 @@ abstract class AbstractLogger implements LoggerInterface
      */
     public function debug($message, array $context = array())
     {
-        $this->log(\Psr\Log\LogLevel::DEBUG, $message, $context);
+        $this->log(LogLevel::DEBUG, $message, $context);
     }
 }

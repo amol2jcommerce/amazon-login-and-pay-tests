@@ -94,6 +94,11 @@ body.loading .modal {
   background-color: #ffecec;
 }
 
+.status {
+  font-size: 12pt;
+  font-style: italic;
+  width: 100%;
+}
 
 .button:hover {
   background-color: #ffaa11;
@@ -112,12 +117,16 @@ img.blur {
     cursor: pointer;
 }
 
+#payment_descriptor_name, #payment_descriptor_tail {
+  font-style: italic;
+}
+
     </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
   <body>
 
-    <div id="status" class="info">Preparing...</div>
+    <div id="status" class="status info">Preparing...</div>
     <br />
     <p />
   	<div id="login_with_amazon_button" class="modalcontainer">
@@ -125,8 +134,8 @@ img.blur {
   	  <img id="pre_image" src="https://d23yuld0pofhhw.cloudfront.net/uk/sandbox/amazonpay/gold/large/button_T1.png" class="blur"></img>
   	</div>
   	<p id="payment_message" class="gone">
-      Thanks for using Amazon Pay. We will charge your default payment instrument you specified on Amazon. <br />
-      To display or change the payment instrument, please click <i><a href="#" id="toggleWidget">here</a></i>.
+      Thanks for using Amazon Pay.<br /><br /> We will charge your <span id="payment_descriptor_name"></span> ending in <span id="payment_descriptor_tail"></span>.<br />
+      <span style="font-size: 10pt">To change the payment instrument, please click <i><a href="#" id="toggleWidget">here</a></i>.</span>
     </p>
     <p id="payment_message_success" class="gone">
       Thanks for your purchase. For security reasons you have been disconnected from your Amazon account.<br />Please <a href=".">start over</a> to place another purchase.
@@ -273,7 +282,10 @@ img.blur {
                     }
                   })
                   .done(function( data ) {
-                      console.log(data);
+                    var response = JSON.parse(data); 
+                      console.log(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor);
+                      $("#payment_descriptor_name").html(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor.Name);
+                      $("#payment_descriptor_tail").html(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor.AccountNumberTail);
                       if(callback != null){
                         callback();
                       }
@@ -327,8 +339,8 @@ img.blur {
     <p>
       TODO:
       <ul>
-        <li>payment instrument descriptor?</li>
         <li>creteORO call?</li>
+        <li>detect closing of popup</li>
       </ul>
     </p>
 
