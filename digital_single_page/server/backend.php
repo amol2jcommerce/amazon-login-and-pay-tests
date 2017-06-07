@@ -37,6 +37,7 @@ if($action === "getOrderReferenceDetails"){
 }
 
 function prepareRequestParameters(){
+	global $config;
 	$requestParameters = array();
 	$requestParameters['merchant_id'] = $config['merchant_id'];
 	return $requestParameters;

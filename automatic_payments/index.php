@@ -260,6 +260,7 @@ if(isset($_GET['access_token'])){
         	var addressBookWidget = new OffAmazonPayments.Widgets.AddressBook({
         	sellerId: "<?php echo $config['merchant_id']; ?>",
         	agreementType: 'BillingAgreement',
+        	scope: "profile payments:widget payments:shipping_address payments:billing_address",
         <?php
             if(isset($_SESSION['billingAgreementId']) && $_SESSION['billingAgreementId'] != ""){
                 echo "amazonBillingAgreementId: \"".$_SESSION['billingAgreementId']."\",\n";
@@ -297,6 +298,7 @@ if(isset($_GET['access_token'])){
         
             var walletWidget = new OffAmazonPayments.Widgets.Wallet({
         	sellerId: '<?php echo $config['merchant_id']; ?>',
+        	scope: "profile payments:widget payments:shipping_address payments:billing_address",
         	// amazonBillingAgreementId obtained from the AddressBook widget
         <?php
             if(isset($_SESSION['billingAgreementId']) && $_SESSION['billingAgreementId'] != ""){
