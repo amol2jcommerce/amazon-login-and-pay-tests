@@ -22,7 +22,7 @@
 	
 	<script>
       window.onAmazonLoginReady = function(){
-        amazon.Login.setClientId("amzn1.application-oa2-client.8d5f99bf3e31412f97756d7d928a3ce1");	
+        amazon.Login.setClientId("<your marketplace client-id>");	
       };
 	  
       window.onAmazonPaymentsReady = function() {
@@ -36,7 +36,7 @@
 
     function renderMPButton(){
         var authRequest;
-        OffAmazonPayments.Button("login_with_amazon_button", "ABEHN0MDIQQOW", {
+        OffAmazonPayments.Button("login_with_amazon_button", "<your marketplace merchant id>", {
           type:  "LwA",
           color: "Gold",
           size:  "large",
@@ -60,7 +60,7 @@
      
      function renderMerchantButton(){
         var authRequest;
-        OffAmazonPayments.Button("login_with_amazon_button_2", "A1XCVOHP3URKFF", {
+        OffAmazonPayments.Button("login_with_amazon_button_2", "<your merchant's merchantid>", {
           type:  "PwA",
           color: "Gold",
           size:  "large",
