@@ -30,96 +30,96 @@ require_once 'config.php';
           position: absolute; top: -9999px; left: -9999px;
         }
         
-     
-
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
-.modal {
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index:    1000;
-    background: rgba( 255, 255, 255, .8 ) 
-                url('https://i.stack.imgur.com/FhHRx.gif') 
-                50% 50% 
-                no-repeat;
-}
-
-.modalcontainer {
-  position: relative;
-}
-
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
-body.loading {
-    overflow: hidden;   
-}
-
-/* Anytime the body has the loading class, our
-   modal element will be visible */
-body.loading .modal {
-    display: block;
-}
-
-.button, .info, .success, .error {
-    background-color: #ff9900;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: bold;
-    display: inline-block;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.info, .success, .error {
-  color: black;
-  text-align: left;
-}
-
-.info {
-  background-color: #e3f7fc;
-}
-
-.success {
-  background-color: #e9ffd9;
-}
-
-.error {
-  background-color: #ffecec;
-}
-
-.status {
-  font-size: 12pt;
-  font-style: italic;
-  width: 100%;
-}
-
-.button:hover {
-  background-color: #ffaa11;
-}
-
-img.blur {
-    filter: url(blur.svg#blur);
-    -webkit-filter: blur(1px) grayscale(100%);
-    filter: blur(1px) grayscale(100%);
-    filter: progid: DXImageTransform.Microsoft.Blur(PixelRadius='2');
-
-    z-index: -2;
-}
-
-.clickable {
-    cursor: pointer;
-}
-
-#payment_descriptor_name, #payment_descriptor_tail {
-  font-style: italic;
-}
+             
+        
+        /* Start by setting display:none to make this hidden.
+           Then we position it in relation to the viewport window
+           with position:fixed. Width, height, top and left speak
+           for themselves. Background we set to 80% white with
+           our animation centered, and no-repeating */
+        .modal {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index:    1000;
+            background: rgba( 255, 255, 255, .8 ) 
+                        url('https://i.stack.imgur.com/FhHRx.gif') 
+                        50% 50% 
+                        no-repeat;
+        }
+        
+        .modalcontainer {
+          position: relative;
+        }
+        
+        /* When the body has the loading class, we turn
+           the scrollbar off with overflow:hidden */
+        body.loading {
+            overflow: hidden;   
+        }
+        
+        /* Anytime the body has the loading class, our
+           modal element will be visible */
+        body.loading .modal {
+            display: block;
+        }
+        
+        .button, .info, .success, .error {
+            background-color: #ff9900;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: bold;
+            display: inline-block;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .info, .success, .error {
+          color: black;
+          text-align: left;
+        }
+        
+        .info {
+          background-color: #e3f7fc;
+        }
+        
+        .success {
+          background-color: #e9ffd9;
+        }
+        
+        .error {
+          background-color: #ffecec;
+        }
+        
+        .status {
+          font-size: 12pt;
+          font-style: italic;
+          width: 100%;
+        }
+        
+        .button:hover {
+          background-color: #ffaa11;
+        }
+        
+        img.blur {
+            filter: url(blur.svg#blur);
+            -webkit-filter: blur(1px) grayscale(100%);
+            filter: blur(1px) grayscale(100%);
+            filter: progid: DXImageTransform.Microsoft.Blur(PixelRadius='2');
+        
+            z-index: -2;
+        }
+        
+        .clickable {
+            cursor: pointer;
+        }
+        
+        #payment_descriptor_name, #payment_descriptor_tail {
+          font-style: italic;
+        }
 
     </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -195,7 +195,7 @@ img.blur {
   		  $("#accesstoken").val(result.access_token);
   		  $("#login_with_amazon_button").fadeOut("slow", renderPaymentWidget);
   		  $("#status").html("Welcome! We are preparing your oder now: ");
-  		  
+  		  //createOrderReference();
   		}
   		$("body").removeClass("loading");
   	 }
@@ -223,6 +223,7 @@ img.blur {
                       $("#buy").click(purchaseAJAX);
                       $("#status").html($("#status").html() + "Done! ");
                       $("#status").removeClass("info", 1000).addClass("success", 1000);
+
                     });
                 })
                 .fail(function(error){
@@ -286,6 +287,22 @@ img.blur {
                       console.log(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor);
                       $("#payment_descriptor_name").html(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor.Name);
                       $("#payment_descriptor_tail").html(response.GetOrderReferenceDetailsResult.OrderReferenceDetails.PaymentDescriptor.AccountNumberTail);
+                      if(callback != null){
+                        callback();
+                      }
+                  })
+                  .fail(function(error){
+                    console.log(error);
+                  });
+  	  }
+  	  
+  	  function createOrderReference(callback){
+  	    $.post("server/backend.php", 
+                  {action: "createOrderReference", 
+                    data : { access_token: $("#accesstoken").val() }
+                  })
+                  .done(function( data ) {
+                      console.log(data);
                       if(callback != null){
                         callback();
                       }
