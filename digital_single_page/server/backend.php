@@ -34,37 +34,8 @@ if($action === "getOrderReferenceDetails"){
     closeOrderReference($oroId);
     
     echo "OK";
-} else if("createOrderReference"){
-	$accessToken = $data['access_token'];
-	$result = createOrderReference($accessToken);
-	
-	echo $result;
-}
+} 
 
-function createOrderReference($accessToken){
-	global $config;
-	$merchantId = $config['merchant_id'];
-	$url = "https://payments-eu.amazon.com/api/v1/orderReferences";
-	$jsonRequestBody =" {'securityContext': 'eydzZGtWZXJzaW9uJzogJzIuMScsJ3Byb2R1Y3RUeXBlJzogJ1BXQScsJ3N1YlByb2R1Y3RUeXBlJzogJ01PQklMRV9TREsnfQ==','accessToken': '".$accessToken."','associateShippingAddress': true,'merchantId': 'AUFORHVDBNC4T','paymentRegion': 'EU_GBP','merchantPreferenceLanguage': 'en_GB','buyerPreferenceLanguage': 'en_GB'}";
-		
-	$postBody= "securityContext=eydzZGtWZXJzaW9uJzogJzIuMScsJ3Byb2R1Y3RUeXBlJzogJ1BXQScsJ3N1YlByb2R1Y3RUeXBlJzogJ01PQklMRV9TREsnfQ==&accessToken=".$accessToken."&associateShippingAddress=true&merchantId=".$merchantId."&paymentRegion=EU_GBP&merchantPreferenceLanguage=en_GB&buyerPreferenceLanguage=en_GB";
-	$postBody= "accessToken=".$accessToken."&associateShippingAddress=true&merchantId=".$merchantId."&paymentRegion=EU_GBP&merchantPreferenceLanguage=en_GB&buyerPreferenceLanguage=en_GB";
-	//open connection
-	$ch = curl_init($url);
-	//set the url, number of POST vars, POST data
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // this should be true!!! TODO
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION ,1);
-	curl_setopt($ch, CURLOPT_HEADER ,0); // DO NOT RETURN HTTP HEADERS
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER ,1); // RETURN THE CONTENTS OF THE CALL
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120); // Timeout on connect (2 minutes)
-	
-	$result = curl_exec($ch);
-	
-	$response = json_decode($result, true);
-	return $result;
-}
 
 function prepareRequestParameters(){
 	global $config;
