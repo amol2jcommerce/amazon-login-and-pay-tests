@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <title>Minimal button sample</title>
+</head>
+
+<body>
+    <div id="PwAButton"></div>
+
+    <script>
+        window.onAmazonLoginReady = function() {
+            amazon.Login.setClientId('amzn1.application-oa2-client.ae3a51ba826640aeabd81ba01dd48a7c');
+        }
+
+        window.onAmazonPaymentsReady = function() {
+            // render the button here
+            var authRequest;
+
+            OffAmazonPayments.Button('PwAButton', 'A35IGDGQ3YY158', {
+                type: 'PwA',
+                color: 'gold',
+                size: 'large',
+                language: 'de-DE',
+
+                authorization: function() {
+                    loginOptions = {
+                        scope: 'payments:widget',
+                        popup: true
+                    };
+                    authRequest = amazon.Login.authorize(loginOptions, '.');
+                }
+            });
+        }
+    </script>
+
+    <script async="async" src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'></script>
+
+    <p>
+        For detailed instructions, please follow: <a href="https://pay.amazon.com/de/developer/documentation/lpwa/201952050" target="_blank">the official guide</a>
+    </p>
+</body>
+
+</html>
