@@ -23,17 +23,21 @@ if($action === "getOrderReferenceDetails"){
 	$amount = $data['ordertotal'];
 	
 	$result = setOrderReferenceDetails($oroId, $amount, "GBP");
+} else if($action === "closeOrderReference"){
+	$oroId = $data['orderReferenceId'];
+	closeOrderReference($oroId);
+}  else if($action === "cancelOrderReference"){
+	$oroId = $data['orderReferenceId'];
+	cancelOrderReference($oroId);
 } else if($action === "purchase"){
 	$oroId = $data['orderReferenceId'];
 	$amount = $data['ordertotal'];
 	
 	confirmOrderReference($oroId);
     
-    authorizeAndCapture($oroId, $amount, "GBP");
-    
-    closeOrderReference($oroId);
-    
-    echo "OK";
+    $response = authorizeAndCapture($oroId, $amount, "GBP");
+
+    echo $response->toJson();
 } 
 
 
@@ -48,7 +52,7 @@ function getOrderReferenceDetails($oroId, $accessToken = null){
 	global $client;
 	$requestParameters = prepareRequestParameters();
 	$requestParameters['amazon_order_reference_id'] = $oroId;
-	$requestParameters['access_token'] = $accessToken;
+	$requestParameters['access_token'] = $accessToken; // use this one to benefit from the new scope
 //	$requestParameters['address_consent_token'] = $accessToken;
 	
 	return $client->getOrderReferenceDetails($requestParameters);
@@ -86,7 +90,9 @@ function authorizeAndCapture($oroId, $amount, $currency, $referenceId = null){
 	$requestParameters['transaction_timeout'] = 0;
 	$requestParameters['capture_now'] = true;
 	
-    $client->authorize($requestParameters);
+    $response = $client->authorize($requestParameters);
+    
+    return $response;
 }
 
 function closeOrderReference($oroId){
@@ -94,6 +100,13 @@ function closeOrderReference($oroId){
 	$requestParameters = prepareRequestParameters();
 	$requestParameters['amazon_order_reference_id'] = $oroId;
 	return $client->closeOrderReference($requestParameters);
+}
+
+function cancelOrderReference($oroId){
+	global $client;
+	$requestParameters = prepareRequestParameters();
+	$requestParameters['amazon_order_reference_id'] = $oroId;
+	return $client->cancelOrderReference($requestParameters);
 }
     
     

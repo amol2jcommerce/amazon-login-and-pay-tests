@@ -5,124 +5,8 @@ require_once 'config.php';
   <head>
     <title>Smooth digital</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  
-    <style type="text/css">
-        /* Please include the min-width, max-width, min-height and max-height	 */
-        /* if you plan to use a relative CSS unit measurement to make sure the */
-        /* widget renders in the optimal size allowed.							           */
-
-        #login_with_amazon_payment_widget {min-width: 300px; max-width:600px; min-height: 228px;
-        max-height: 400px;}
-
-        /* Smartphone and small window */
-        #login_with_amazon_payment_widget {width: 100%; height: 228px;}
-
-        /* Desktop and tablet */
-        @media only screen and (min-width: 768px) {
-            #login_with_amazon_payment_widget {width: 400px; height: 228px;}
-        }
-        
-        .gone {
-          display: none;
-        }
-        
-        .offscreen {
-          position: absolute; top: -9999px; left: -9999px;
-        }
-        
-             
-        
-        /* Start by setting display:none to make this hidden.
-           Then we position it in relation to the viewport window
-           with position:fixed. Width, height, top and left speak
-           for themselves. Background we set to 80% white with
-           our animation centered, and no-repeating */
-        .modal {
-            display: none;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index:    1000;
-            background: rgba( 255, 255, 255, .8 ) 
-                        url('https://i.stack.imgur.com/FhHRx.gif') 
-                        50% 50% 
-                        no-repeat;
-        }
-        
-        .modalcontainer {
-          position: relative;
-        }
-        
-        /* When the body has the loading class, we turn
-           the scrollbar off with overflow:hidden */
-        body.loading {
-            overflow: hidden;   
-        }
-        
-        /* Anytime the body has the loading class, our
-           modal element will be visible */
-        body.loading .modal {
-            display: block;
-        }
-        
-        .button, .info, .success, .error {
-            background-color: #ff9900;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: bold;
-            display: inline-block;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        
-        .info, .success, .error {
-          color: black;
-          text-align: left;
-        }
-        
-        .info {
-          background-color: #e3f7fc;
-        }
-        
-        .success {
-          background-color: #e9ffd9;
-        }
-        
-        .error {
-          background-color: #ffecec;
-        }
-        
-        .status {
-          font-size: 12pt;
-          font-style: italic;
-          width: 100%;
-        }
-        
-        .button:hover {
-          background-color: #ffaa11;
-        }
-        
-        img.blur {
-            filter: url(blur.svg#blur);
-            -webkit-filter: blur(1px) grayscale(100%);
-            filter: blur(1px) grayscale(100%);
-            filter: progid: DXImageTransform.Microsoft.Blur(PixelRadius='2');
-        
-            z-index: -2;
-        }
-        
-        .clickable {
-            cursor: pointer;
-        }
-        
-        #payment_descriptor_name, #payment_descriptor_tail {
-          font-style: italic;
-        }
-
-    </style>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <link rel="stylesheet" href="main.css" type="text/css" />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
   <body>
 
@@ -141,9 +25,15 @@ require_once 'config.php';
       Thanks for your purchase. For security reasons you have been disconnected from your Amazon account.<br />Please <a href=".">start over</a> to place another purchase.
     </p>
     <p id="payment_message_failed" class ="gone">
-      Unfortunately something went wrong with your pyments. Please try again. If the issue persists, please get in touch.
+      Unfortunately something went wrong with your payments. Please try again. If the issue persists, please get in touch.
     </p>
-    <div id="login_with_amazon_payment_widget" class="offscreen"></div>
+    <p id="payment_message_declined_IPM" class ="gone">
+      Unfortunately the payment isntrument selected was declined, Please select another isntrument from the widget below.
+    </p>
+    <p id="payment_message_declined_hard" class ="gone">
+      Unfortunately something went wrong with your pyments. Please get in touch to find an alternative way of payment.
+    </p>
+    <div id="pay_with_amazon_payment_widget" class="offscreen"></div>
     
     <div id="buy" name="buy" class="gone">Complete purchase</div>
     <input type="hidden" name="accesstoken" id="accesstoken" />
@@ -152,11 +42,16 @@ require_once 'config.php';
       window.onAmazonLoginReady = function(){
         amazon.Login.setClientId("<?php echo $config['client_id']; ?>");	
       };
+      
       window.onAmazonPaymentsReady = function() {
          renderButton();
-         $("#status").html("Please sign in using your Amazon account.");
+         setStatusMessage("Please sign in using your Amazon account.");
       };
 
+
+      /**
+       * Render the Amazon Pay button
+       */
       function renderButton(){
           var authRequest;
           OffAmazonPayments.Button("login_with_amazon_button", "<?php echo $config['merchant_id']; ?>", {
@@ -168,6 +63,7 @@ require_once 'config.php';
             authorization: function() {
               loginOptions =
                 {scope: "profile payments:widget payments:shipping_address payments:billing_address payments:instrument_descriptor", popup: "true"};
+                
               // add extra functionality to the authRequest to display the loading indicator
               authRequest = function(){
                 $("body").addClass("loading");
@@ -178,80 +74,47 @@ require_once 'config.php';
               }();
             },
             onError: function(error) {
-              console.log(error);
+              console.log(error.getErrorMessage());
             }
           });
+          
+          // loading animation, move the button from blurred to normal
           $("#login_with_amazon_button img").fadeIn("slow", function() {
             $(this).removeClass("blur").addClass("clickable");
           });
        }
   
+  
+     /**
+      * method called when and if the customer authorized or denied consent
+      */
   	 function customerAuthorized(result){
-  		console.log(result);
+  	   // on error log what happened
   		if(result.error){
   		  console.log("no consent or similar");
-  		  $("#status").html("Authentication failed, please accept all consents to go on.");
+  		  console.log(result);
+  		  setStatusMessage("Authentication failed, please accept all consents to go on.");
+  		  // on success, save the acess_token and render the widget
   		} else {
   		  $("#accesstoken").val(result.access_token);
   		  $("#login_with_amazon_button").fadeOut("slow", renderPaymentWidget);
-  		  $("#status").html("Welcome! We are preparing your oder now: ");
-  		  //createOrderReference();
+  		  setStatusMessage("Welcome! We are preparing your oder now: ");
   		}
   		$("body").removeClass("loading");
   	 }
         
       var orderReferenceId;
+      var keepWalletOpen = false;
+      
+      /**
+       * render the payment widget
+       */
       function renderPaymentWidget(){
-        new OffAmazonPayments.Widgets.Wallet({
+        window.walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $config["merchant_id"]?>',
             scope: "profile payments:widget payments:shipping_address payments:billing_address payments:instrument_descriptor",
-            onOrderReferenceCreate: function(orderReference) {
-              orderReferenceId = orderReference.getAmazonOrderReferenceId();
-              console.log(orderReferenceId);
-              $("#status").html($("#status").html() + "setting order details... ");
-              $.post("server/backend.php", 
-                {action: "setOrderReferenceDetails", 
-                  data : { orderReferenceId: orderReferenceId
-                    , ordertotal: 1000
-                  }
-                })
-                .done(function( data ) {
-                  $("#status").html($("#status").html() + "retreiving data from Amazon... ");
-                    getORODetailsAJAX(function(){
-                      $("#payment_message").fadeIn("slow").addClass("success");
-                      $("#buy").removeClass("gone").addClass("button", 1000);
-                      $("#buy").click(purchaseAJAX);
-                      $("#status").html($("#status").html() + "Done! ");
-                      $("#status").removeClass("info", 1000).addClass("success", 1000);
-
-                    });
-                })
-                .fail(function(error){
-                   $("#status").html("An unexpected error occured.");
-                   $("#status").removeClass("info", 1000).addClass("error", 1000);
-                  console.log(error);
-                });
-            },
-            onPaymentSelect: function(orderReference) {
-              console.log("payment select");
-              
-              var callback = null;
-              // only after placing the widget in the visual area (we set the class gone at that time), react
-              if($("#login_with_amazon_payment_widget").hasClass("gone")){
-                toggleWidget();
-                $("#status").html("Payment details changed. ");
-                $("#status").removeClass("error success", 1000).addClass("info", 1000);
-                $("#status").html($("#status").html() + "Refreshing data from Amazon... ");
-                callback = function(){
-                  $("#status").html($("#status").html() + "Done!");
-                  $("#status").removeClass("error info", 1000).addClass("success", 1000);
-                };
-              } else {
-                // now that the widget was rendered and we have an ORO, make it gone, but in the desired spot
-                $("#login_with_amazon_payment_widget").addClass("gone").removeClass("offscreen");
-              }
-              getORODetailsAJAX(callback);
-            },
+            onOrderReferenceCreate: oroCreateCallback,
+            onPaymentSelect: paymentSelectCallback,
             onReady: function(){
               $("#toggleWidget").click(toggleWidget);
             },
@@ -261,9 +124,67 @@ require_once 'config.php';
             onError: function(error) {
               console.log(error);
             }
-          }).bind("login_with_amazon_payment_widget");
+          });
+          window.walletWidget.bind("pay_with_amazon_payment_widget");
       }
-  	  
+      
+      function oroCreateCallback(orderReference) {
+        // sotre the oro
+        orderReferenceId = orderReference.getAmazonOrderReferenceId();
+        
+        addStatusMessage("setting order details... ")
+        
+        // set the details of the transaction
+        $.post("server/backend.php", 
+          {action: "setOrderReferenceDetails", 
+            data : { orderReferenceId: orderReferenceId
+              , ordertotal: 1000
+            }
+          })
+          .done(function( data ) {
+            // get the details of the transaction
+            addStatusMessage("retreiving data from Amazon... ");
+              getORODetailsAJAX(/* this is the callback for getORODetails*/ function(result){
+                $("#payment_message").fadeIn("slow").addClass("success");
+                $("#buy").click(purchaseAJAX);
+                addStatusMessage("Done! ");
+                $("#status").removeClass("info error", 1000).addClass("success", 1000);
+
+              });
+          })
+          .fail(function(error){
+             setStatusMessage("An unexpected error occured.");
+             $("#status").removeClass("info success warning", 1000).addClass("error", 1000);
+            console.log(error.getErrorMessage());
+          });
+      }
+      
+      function paymentSelectCallback(orderReference) {
+        console.log("payment select");
+        
+        var callback = null;
+        // only after placing the widget in the visual area (we set the class gone at that time), react
+        if($("#pay_with_amazon_payment_widget").hasClass("gone")){
+          // only toggl the widget if we not explicitly prevent this
+          if(!keepWalletOpen){
+            toggleWidget();
+          }
+          setStatusMessage("Payment details changed. ");
+          $("#status").removeClass("error success", 1000).addClass("info", 1000);
+          addStatusMessage("Refreshing data from Amazon... ");
+          callback = function(){
+            addStatusMessage("Done!");
+            $("#status").removeClass("error info", 1000).addClass("success", 1000);
+          };
+        } else {
+          // now that the widget was rendered and we have an ORO, make it gone, but in the desired spot
+          $("#pay_with_amazon_payment_widget").addClass("gone").removeClass("offscreen");
+        }
+        $("#buy").removeClass("gone").addClass("button", 1000);
+        $("#buy").fadeIn("slow");
+        getORODetailsAJAX(callback);
+      }
+
   	  function logout(reload){
   		  amazon.Login.logout();
   		  if(reload){
@@ -271,8 +192,25 @@ require_once 'config.php';
   		  }
   	  }
   	  
+  	  
+  	  function addStatusMessage(message){
+  	    $("#status").html($("#status").html() + message);
+  	  }
+  	  
+  	  function setStatusMessage(message){
+  	    $("#status").html(message);
+  	  }
+  	  
   	  function toggleWidget(){
-  	    $("#login_with_amazon_payment_widget").fadeToggle('slow');
+  	    $("#pay_with_amazon_payment_widget").fadeToggle('slow');
+  	  }
+  	  
+  	  function showWidget(){
+  	    $("#pay_with_amazon_payment_widget").fadeIn('slow');
+  	  }
+  	  
+  	  function hideWidget(){
+  	    $("#pay_with_amazon_payment_widget").fadeOut('slow');
   	  }
   	  
   	  function getORODetailsAJAX(callback){
@@ -304,7 +242,39 @@ require_once 'config.php';
                   .done(function( data ) {
                       console.log(data);
                       if(callback != null){
-                        callback();
+                        callback(data);
+                      }
+                  })
+                  .fail(function(error){
+                    console.log(error);
+                  });
+  	  }
+  	  
+  	  function closeOROAjax(callback){
+  	    $.post("server/backend.php", 
+                  {action: "closeOrderReference", 
+                     data : { orderReferenceId: orderReferenceId }
+                  })
+                  .done(function( data ) {
+                      console.log(data);
+                      if(callback != null){
+                        callback(data);
+                      }
+                  })
+                  .fail(function(error){
+                    console.log(error);
+                  });
+  	  }
+  	  
+  	  function cancelOROAjax(callback){
+  	    $.post("server/backend.php", 
+                  {action: "cancelOrderReference", 
+                     data : { orderReferenceId: orderReferenceId }
+                  })
+                  .done(function( data ) {
+                      console.log(data);
+                      if(callback != null){
+                        callback(data);
                       }
                   })
                   .fail(function(error){
@@ -313,8 +283,9 @@ require_once 'config.php';
   	  }
   	  
   	  function purchaseAJAX(){
-  	     $("#status").html("Processign your payments now...");
-  	     $("#status").removeClass("error success", 1000).addClass("info", 1000);
+  	    keepWalletOpen = false;
+  	    $("#status").html("Processign your payments now...");
+  	   $("#status").removeClass("error success", 1000).addClass("info", 1000);
   	    $.post("server/backend.php", 
                   {action: "purchase", 
                     data : { orderReferenceId: orderReferenceId
@@ -322,13 +293,18 @@ require_once 'config.php';
                     }
                   })
                   .done(function( data ) {
-                      console.log(data);
-                      $("#payment_message").fadeOut("slow");
-                      $("#payment_message_success").fadeIn("slow").removeClass("gone").addClass("success");
-                      $("#buy").fadeOut("slow");
-                      $("#status").html("Done!");
-                      $("#status").removeClass("error info", 1000).addClass("success", 1000);
-                      logout();
+                    var authResult = JSON.parse(data);
+                      console.log(authResult);
+                      if(authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.State == "Closed" &&
+                        authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.ReasonCode == "MaxCapturesProcessed") {
+                          purchaseSuccessfull(authResult);
+                      } else if (authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.State == "Declined" &&
+                        authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.ReasonCode == "InvalidPaymentMethod"){
+                        handleIPMDecline(authResult);
+                      } else if (authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.State == "Declined"){
+                        handleHardDecline(authResult);
+                      }
+                      
                   })
                   .fail(function(error){
                     console.log(error);
@@ -336,29 +312,59 @@ require_once 'config.php';
                     $("#payment_message_failed").fadeIn("slow");
                   });
   	  }
+  	  
+  	  function purchaseSuccessfull(authResult){
+  	    closeOROAjax();
+        $("#payment_message").fadeOut("slow");
+        $("#payment_message_success").fadeIn("slow").removeClass("gone").addClass("success");
+        $("#buy").fadeOut("slow");
+        $("#status").html("Done!");
+        $("#status").removeClass("error info", 1000).addClass("success", 1000);
+        $("#payment_message_declined_IPM").fadeOut("slow");
+        $("#pay_with_amazon_payment_widget").fadeOut('slow');
+        // TODO add me in again
+        //logout();
+  	  }
+  	  
+  	  function handleIPMDecline(authResult){
+  	    // payment descriptor is not available for suspended OROs, this is a hack to keep the widget open in this case
+  	    keepWalletOpen = true;
+  	    $("#payment_message").fadeOut("slow");
+  	    $("#buy").fadeOut("slow");
+        setStatusMessage("We received a soft decline on the authorization, please follow the guidance below.");
+        $("#status").removeClass("success info", 1000).addClass("error", 1000);
+        $("#payment_message_declined_IPM").fadeIn("slow").removeClass("gone").addClass("info");
+        
+        // re-redner and display the widget
+        window.walletWidget.setContractId(orderReferenceId);
+        window.walletWidget.bind("pay_with_amazon_payment_widget");
+        showWidget();
+  	  }
+  	  
+  	  function handleHardDecline(authResult){
+  	    $("#payment_message").fadeOut("slow");
+  	    $("#buy").fadeOut("slow");
+        setStatusMessage("We received a hard decline on the authorization, please follow the guidance below. ");
+        $("#status").removeClass("success error", 1000).addClass("info", 1000);
+        $("#payment_message_declined_hard").fadeIn("slow").removeClass("gone").addClass("info");
+        hideWidget();
+        
+        if(authResult.AuthorizeResult.AuthorizationDetails.AuthorizationStatus.ReasonCode == "TransactionTimedOut"){
+          addStatusMessage("Canceling the payment... ");
+  	      cancelOROAjax(/*this is the callback for the cancel call*/function(result){
+  	        addStatusMessage("Done!");
+  	        $("#status").removeClass("error info", 1000).addClass("success", 1000);
+  	      });
+        }
+  	  }
         
     </script>
   	<script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
   	<br />
     <a href="#" onclick="logout(true)">Logout </a>	
-    <br />
-    <br />
-    <br />
-    <br />
-        <br />
-    <br />
-    <br />
-    <br />
-        <br />
-    <br />
-    <br />
-    <br />
-    <p>
-      TODO:
-      <ul>
-        <li>creteORO call?</li>
-        <li>detect closing of popup</li>
-      </ul>
+    <ul>
+      <li>how to detect closing of popup?</li>
+    </ul>
     </p>
 
   </body>
