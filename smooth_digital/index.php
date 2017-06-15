@@ -322,8 +322,7 @@ require_once 'config.php';
         $("#status").removeClass("error info", 1000).addClass("success", 1000);
         $("#payment_message_declined_IPM").fadeOut("slow");
         $("#pay_with_amazon_payment_widget").fadeOut('slow');
-        // TODO add me in again
-        //logout();
+        logout();
   	  }
   	  
   	  function handleIPMDecline(authResult){
