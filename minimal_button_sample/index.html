@@ -11,17 +11,17 @@
         window.onAmazonLoginReady = function() {
             amazon.Login.setClientId('amzn1.application-oa2-client.ae3a51ba826640aeabd81ba01dd48a7c');
         }
-
+    
         window.onAmazonPaymentsReady = function() {
             // render the button here
             var authRequest;
-
+    
             OffAmazonPayments.Button('PwAButton', 'A35IGDGQ3YY158', {
                 type: 'PwA',
                 color: 'gold',
                 size: 'large',
                 language: 'de-DE',
-
+    
                 authorization: function() {
                     loginOptions = {
                         scope: 'payments:widget',
