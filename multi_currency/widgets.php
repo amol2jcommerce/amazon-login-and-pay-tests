@@ -33,6 +33,7 @@ require_once 'config.php';
       <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/base-min.css">
       <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
       <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+      <script type="text/javascript" src="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/vkbeautify/vkbeautify.0.99.00.beta.js"></script>
       <script>
 	
 	  function getURLParameter(name, source) {
@@ -56,7 +57,7 @@ require_once 'config.php';
 <br />
 <h1>Presentment Currency sample</h1>
   <p>
-    This sample demonstrates the use of the Amazon Pay multy currency (presentment currency) feature.<br />
+    This sample demonstrates the use of the Amazon Pay multi currency (presentment currency) feature.<br />
     The merchant account will still be operating in the currency it was created for, the presentment currency the buyer will be charged in can differ from this currency.<br />
     A currency conversion will be done automatically by Amazon Pay.<br /><br />
     
@@ -151,7 +152,7 @@ require_once 'config.php';
             .done(function( data ) {
                 console.log(JSON.parse(data));
                 $("#widgetContent").fadeOut();
-                $("#successContent pre").text(JSON.stringify(data, null, 2));
+                $("#successContent pre").text(vkbeautify.json(data));
                 $("#successContent").fadeIn();
                 // TODO: update the frontend
             });

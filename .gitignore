@@ -4,3 +4,7 @@
 **/*.log
 temp_tests
 smooth_digital_mobile_api
+
+##composer
+**/composer.lock
+**/vendor
