@@ -3,7 +3,7 @@ require_once 'config.php';
 ?>
 <html>
   <head>
-    <title>Redirect - widgets</title>
+    <title>Multi currency - sample</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <style type="text/css">
         /* Please include the min-width, max-width, min-height and max-height	 */
