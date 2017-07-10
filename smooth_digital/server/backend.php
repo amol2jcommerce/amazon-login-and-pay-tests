@@ -58,6 +58,14 @@ function getOrderReferenceDetails($oroId, $accessToken = null){
 	return $client->getOrderReferenceDetails($requestParameters);
 }
 
+function getCaptureDetails($captureId){
+	global $client;
+	$requestParameters = prepareRequestParameters();
+	$requestParameters['amazon_capture_id'] = $captureId;
+	
+	return $client->getCaptureDetails($requestParameters);
+}
+
 function setOrderReferenceDetails($oroId, $amount, $currency){
 	global $client;
 	$requestParameters = prepareRequestParameters();
@@ -91,6 +99,10 @@ function authorizeAndCapture($oroId, $amount, $currency, $referenceId = null){
 	$requestParameters['capture_now'] = true;
 	
     $response = $client->authorize($requestParameters);
+    
+    // also check the capture details
+    $details = $response->toArray();
+    getCaptureDetails($details['AuthorizeResult']['AuthorizationDetails']['IdList']['member']);
     
     return $response;
 }
