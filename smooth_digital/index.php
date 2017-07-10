@@ -358,7 +358,7 @@ require_once 'config.php';
   	  }
         
     </script>
-  	<script async='async' src='https://static-eu-beta.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
+  	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/uk/sandbox/lpa/js/Widgets.js'></script>
   	<br />
     <a href="#" onclick="logout(true)">Logout </a>	
     <ul>
