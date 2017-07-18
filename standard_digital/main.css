@@ -1,0 +1,72 @@
+  /* Please include the min-width, max-width, min-height and max-height	 */
+  /* if you plan to use a relative CSS unit measurement to make sure the */
+  /* widget renders in the optimal size allowed.							           */
+  
+  #pay_with_amazon_payment_widget {
+    min-width: 300px;
+    max-width: 600px;
+    min-height: 228px;
+    max-height: 400px;
+  }
+  /* Smartphone and small window */
+  
+  #pay_with_amazon_payment_widget {
+    width: 100%;
+    height: 228px;
+  }
+  /* Desktop and tablet */
+  
+  @media only screen and (min-width: 768px) {
+    #pay_with_amazon_payment_widget {
+      width: 400px;
+      height: 228px;
+    }
+  }
+  
+  .gone {
+    display: none;
+  }
+  /* Start by setting display:none to make this hidden.
+           Then we position it in relation to the viewport window
+           with position:fixed. Width, height, top and left speak
+           for themselves. Background we set to 80% white with
+           our animation centered, and no-repeating */
+  
+  .button,
+  .info,
+  .success,
+  .error {
+    background-color: #ff9900;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: bold;
+    display: inline-block;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .info,
+  .success,
+  .error {
+    color: black;
+    text-align: left;
+  }
+  
+  .info {
+    background-color: #e3f7fc;
+  }
+  
+  .success {
+    background-color: #e9ffd9;
+  }
+  
+  .error {
+    background-color: #ffecec;
+  }
+  
+  .button:hover {
+    background-color: #ffaa11;
+  }
+  
