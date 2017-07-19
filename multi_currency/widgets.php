@@ -81,6 +81,7 @@ require_once 'config.php';
                       <option>EUR</option>
                       <option>GBP</option>
                       <option>USD</option>
+                      <option>BTC</option>
                   </select>
                   <span class="pure-form-message-inline">*required</span>
                   <span class="pure-form-message-inline"> **only a selection of possible currencies</span>
@@ -158,6 +159,12 @@ require_once 'config.php';
             });
 	  });
 	  
+	  $('#currency').change(function() {
+	    if(wallet){
+	      wallet.setPresentmentCurrency($('#currency').find(":selected").text()).bind("login_with_amazon_widget2");
+	    }
+	  });
+	  
 	  window.onAmazonLoginReady = function(){
         amazon.Login.setClientId("<?php echo $config['client_id']; ?>");	
         amazon.Login.setUseCookie(true);
@@ -165,7 +172,7 @@ require_once 'config.php';
 	  
 	    var paymentRendered = false;
       var orderReferenceId;
-      
+      var wallet;
       function renderAddressWidget(){
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: "<?php echo $config['merchant_id']?>",
@@ -189,7 +196,7 @@ require_once 'config.php';
       
       
       function renderPaymentWidget(){
-        new OffAmazonPayments.Widgets.Wallet({
+        wallet = new OffAmazonPayments.Widgets.Wallet({
             sellerId: "<?php echo $config['merchant_id']?>",
             scope: "profile payments:widget payments:shipping_address payments:billing_address",
             presentmentCurrency: $('#currency').find(":selected").text(),
@@ -201,7 +208,7 @@ require_once 'config.php';
               designMode: 'responsive'
             },
             onError: function(error) {
-              console.log(error.getErrorMessage());
+              console.log(error.getErrorCode() + " - " + error.getErrorMessage());
             }
           }).bind("login_with_amazon_widget2");
           
