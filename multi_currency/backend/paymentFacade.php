@@ -1,11 +1,12 @@
 <?php 
 require '../vendor/autoload.php';
 require_once '../config.php';
-//require_once "Logger.php";
+
+require_once "Logger.php";
 
 $client = new AmazonPay\Client($config);
-//$logger = new \PSR\Log\Logger();
-//$client->setLogger($logger);
+$logger = new Logger();
+$client->setLogger($logger);
 
 $action = $_POST['action'];
 

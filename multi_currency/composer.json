@@ -2,7 +2,6 @@
     "name": "amzn/multi_currency_payments",
     "version": "1.0.0",
     "require": {
-        "amzn/amazon-pay-sdk-php": "^3.1.0",
-        "apache/log4php": "2.3.0"
+        "amzn/amazon-pay-sdk-php": "^3.1.0"
     }
 }

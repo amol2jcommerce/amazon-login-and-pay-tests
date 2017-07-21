@@ -82,6 +82,7 @@ require_once 'config.php';
                       <option>GBP</option>
                       <option>USD</option>
                       <option>BTC</option>
+                      <option>CNY</option>
                   </select>
                   <span class="pure-form-message-inline">*required</span>
                   <span class="pure-form-message-inline"> **only a selection of possible currencies</span>
@@ -151,6 +152,7 @@ require_once 'config.php';
             };
             $.post( "backend/paymentFacade.php", postData)
             .done(function( data ) {
+              console.log(data);
                 console.log(JSON.parse(data));
                 $("#widgetContent").fadeOut();
                 $("#successContent pre").text(vkbeautify.json(data));
@@ -223,7 +225,7 @@ require_once 'config.php';
   </script>
 	
 	
-	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'></script>
+	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/gbp/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>

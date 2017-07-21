@@ -48,7 +48,7 @@ require_once 'config.php';
      }
 
 </script>
-	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'></script>
+	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/gbp/sandbox/lpa/js/Widgets.js'></script>
 
   </body>
 </html>
