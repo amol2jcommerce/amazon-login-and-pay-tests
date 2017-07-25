@@ -22,7 +22,7 @@ if($action === "getOrderReferenceDetails"){
 	$oroId = $data['orderReferenceId'];
 	$amount = $data['ordertotal'];
 	
-	$result = setOrderReferenceDetails($oroId, $amount, "EUR");
+	$result = setOrderReferenceDetails($oroId, $amount, "GBP");
 } else if($action === "closeOrderReference"){
 	$oroId = $data['orderReferenceId'];
 	closeOrderReference($oroId);
@@ -33,9 +33,10 @@ if($action === "getOrderReferenceDetails"){
 	$oroId = $data['orderReferenceId'];
 	$amount = $data['ordertotal'];
 	
-	confirmOrderReference($oroId);
+	$confirm = confirmOrderReference($oroId);
+//	print_r($confirm);
     
-    $response = authorizeAndCapture($oroId, $amount, "EUR");
+    $response = authorizeAndCapture($oroId, $amount, "GBP");
 
     echo $response->toJson();
 } 

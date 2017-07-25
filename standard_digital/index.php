@@ -31,7 +31,6 @@ require_once 'config.php';
     <div id="pay_with_amazon_payment_widget"></div>
     
     <div id="buy" name="buy" class="gone">Complete purchase</div>
-    <input type="hidden" name="accesstoken" id="accesstoken" />
   	
 	  <script>
       window.onAmazonLoginReady = function(){
@@ -78,8 +77,6 @@ require_once 'config.php';
   		  // do something
   		  
   		} else {
-  		  $("#accesstoken").val(result.access_token);
-  		  
   		  // this hides the button and renders the widget as a callback after the fading.
   		  $("#login_with_amazon_button").fadeOut("slow", renderPaymentWidget);
   		}
@@ -157,9 +154,7 @@ require_once 'config.php';
   	  function getORODetailsAJAX(){
   	    $.post("server/backend.php", 
           {action: "getOrderReferenceDetails", 
-            data : { orderReferenceId: orderReferenceId
-              , access_token: $("#accesstoken").val()
-            }
+            data : { orderReferenceId: orderReferenceId }
           })
           .done(function( data ) {
             var response = JSON.parse(data); 
@@ -215,6 +210,7 @@ require_once 'config.php';
             }
           })
           .done(function( data ) {
+            console.log(authResult);
             var authResult = JSON.parse(data);
             console.log(authResult);
               // If the Authorization was closed with the reasonCode MaxCapturesProcessed, the payment was SUCCESSFUL
@@ -293,7 +289,7 @@ require_once 'config.php';
         
     </script>
     
-  	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'></script>
+  	<script async='async' src='https://static-eu.payments-amazon.com/OffAmazonPayments/gbp/sandbox/lpa/js/Widgets.js'></script>
   	
   	<br />
     <a href="#" onclick="logout(true)">Logout </a>	
